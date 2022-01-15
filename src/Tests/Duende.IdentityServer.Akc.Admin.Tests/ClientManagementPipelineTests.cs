@@ -16,14 +16,17 @@ namespace Duende.IdentityServer.Akc.Management.Tests
     [Trait("Category", "Integration")]
     public class ClientManagementPipelineTests
     {
-        private HttpClient Client => _factory.CreateClient();
+        private HttpClient Client { get; }
         private JsonSerializerOptions JsonOptions => _factory.Services.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
         private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
 
         private readonly DefaultWebApplicationFactory _factory;
 
-        public ClientManagementPipelineTests() =>
+        public ClientManagementPipelineTests()
+        {
             _factory = new DefaultWebApplicationFactory();
+            Client = _factory.CreateClient();
+        }
 
         [Fact(DisplayName = "Return stored clients")]
         public async Task Test01()
@@ -57,6 +60,18 @@ namespace Duende.IdentityServer.Akc.Management.Tests
             var actualClients = await Client.GetFromJsonAsync<ClientDto[]>("api/clients", options: JsonOptions);
             actualClients.Should().ContainEquivalentOf(updatedClient).Subject
                 .ClientId.Should().Be(clientId.ToString());
+        }
+
+        [Theory(DisplayName = "Delete an existing client")]
+        [InlineAutoData]
+        public async Task Test04(ClientCreateDto existingClient, Guid clientId)
+        {
+            _ = await Client.PutAsJsonAsync($"api/clients/{clientId}", existingClient, options: JsonOptions);
+
+            using var _1 = Client.DeleteAsync($"api/clients/{clientId}");
+
+            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>("api/clients", options: JsonOptions);
+            actualClients.Should().NotContainEquivalentOf(existingClient);
         }
     }
 }

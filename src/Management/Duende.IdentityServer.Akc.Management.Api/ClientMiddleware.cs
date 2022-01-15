@@ -44,6 +44,12 @@ namespace Duende.IdentityServer.Akc.Management.Api
 
                 return;
             }
+            else if (context.Request.IsDelete())
+            {
+                await HandleDelete(context);
+
+                return;
+            }
 
             await _next(context);
         }
@@ -90,6 +96,17 @@ namespace Duende.IdentityServer.Akc.Management.Api
             var dto = _clients.Select(DtoExtensions.FromModel);
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(dto, jsonOptions));
+        }
+
+        private Task HandleDelete(HttpContext context)
+        {
+            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
+
+            var client = _clients.Single(c => c.ClientId == clientId);
+
+            _clients.Remove(client);
+
+            return Task.CompletedTask;
         }
 
         private static async Task<T?> Deserialize<T>(HttpRequest request)
