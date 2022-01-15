@@ -12,76 +12,93 @@ namespace Duende.IdentityServer.Akc.Admin.Api
     internal class ClientMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IEnumerable<Client> _clients;
+        private readonly ICollection<Client> _clients;
 
         public ClientMiddleware(RequestDelegate next, IEnumerable<Client> clients)
         {
             _next = next;
-            _clients = clients;
+            if (clients is not ICollection<Client> clientStore)
+            {
+                throw new InvalidOperationException();
+            }
+            _clients = clientStore;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Method == HttpMethod.Get.Method)
+            if (context.Request.IsGet())
             {
-                var jsonOptions = context.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-                await context.Response.WriteAsync(JsonSerializer.Serialize(_clients, jsonOptions));
+                await HandleGet(context);
 
                 return;
             }
-            else if (context.Request.Method == HttpMethod.Put.Method)
+            else if (context.Request.IsPut())
             {
-                if (_clients is not ICollection<Client> clientStore)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                    return;
-                }
-
-                var jsonOptions = context.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-                var dto = await JsonSerializer.DeserializeAsync<ClientInputDto>(context.Request.Body, jsonOptions);
-                if (dto == null)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                    return;
-                }
-
-                var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-
-                clientStore.Add(dto.ToModel(clientId));
+                await HandlePut(context);
 
                 return;
             }
-            else if (context.Request.Method == HttpMethod.Post.Method)
+            else if (context.Request.IsPost())
             {
-                if (_clients is not ICollection<Client> clientStore)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                    return;
-                }
-
-                var jsonOptions = context.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-                var dto = await JsonSerializer.DeserializeAsync<ClientInputDto>(context.Request.Body, jsonOptions);
-                if (dto == null)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                    return;
-                }
-
-                var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-
-                var existingClient = clientStore.First(x => x.ClientId == clientId);
-                clientStore.Remove(existingClient);
-
-                clientStore.Add(dto.ToModel(clientId));
+                await HandlePost(context);
 
                 return;
             }
 
             await _next(context);
         }
+
+        #region Private
+
+        private async Task HandlePost(HttpContext context)
+        {
+            var dto = await Deserialize<ClientInputDto>(context.Request);
+            if (dto == null)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                return;
+            }
+
+            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
+
+            var existingClient = _clients.First(x => x.ClientId == clientId);
+            _clients.Remove(existingClient);
+
+            _clients.Add(dto.ToModel(clientId));
+        }
+
+        private async Task HandlePut(HttpContext context)
+        {
+            var dto = await Deserialize<ClientInputDto>(context.Request);
+            if (dto == null)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                return;
+            }
+
+            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
+
+            _clients.Add(dto.ToModel(clientId));
+        }
+
+        private async Task HandleGet(HttpContext context)
+        {
+            var jsonOptions = context.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
+
+            var dto = _clients.Select(DtoExtensions.FromModel);
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(dto, jsonOptions));
+        }
+
+        private static async Task<T?> Deserialize<T>(HttpRequest request)
+        {
+            var jsonOptions = request.HttpContext.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
+
+            return await JsonSerializer.DeserializeAsync<T>(request.Body, jsonOptions);
+        }
+
+        #endregion
     }
 }
