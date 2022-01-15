@@ -1,0 +1,13 @@
+mode: Mainline
+branches:
+  dev:
+    tag: preview
+    regex: ^dev(elop)?(ment)?$
+    source-branches: []
+  main:
+    tag: ''
+    regex: ^main$
+    source-branches: []
+ignore:
+  sha: []
+  
