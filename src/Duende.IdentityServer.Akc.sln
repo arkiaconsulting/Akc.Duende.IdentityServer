@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duende.IdentityServer.Akc.M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duende.IdentityServer.Akc.Management.Api", "Management\Duende.IdentityServer.Akc.Management.Api\Duende.IdentityServer.Akc.Management.Api.csproj", "{6EE89298-6505-4068-878C-A3BC26970B28}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6244F5E2-3B9B-44DB-9C05-82A8C1345BA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemory", "Samples\InMemory\InMemory.csproj", "{1F62510E-873F-405E-8CFC-09A6D1345191}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,10 @@ Global
 		{6EE89298-6505-4068-878C-A3BC26970B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EE89298-6505-4068-878C-A3BC26970B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EE89298-6505-4068-878C-A3BC26970B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F62510E-873F-405E-8CFC-09A6D1345191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F62510E-873F-405E-8CFC-09A6D1345191}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F62510E-873F-405E-8CFC-09A6D1345191}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F62510E-873F-405E-8CFC-09A6D1345191}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +40,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B6F50530-6394-4D93-8715-2EC2238D27F3} = {E4D3765D-F5DA-4507-91C9-E175AB34E9A5}
 		{6EE89298-6505-4068-878C-A3BC26970B28} = {7FFDA679-8707-475C-A4DF-2CC881672169}
+		{1F62510E-873F-405E-8CFC-09A6D1345191} = {6244F5E2-3B9B-44DB-9C05-82A8C1345BA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87A0D3C1-3476-4F55-B606-25621A9B146A}

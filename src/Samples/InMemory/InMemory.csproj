@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Duende.IdentityServer" Version="6.0.0" />
+    <PackageReference Include="Duende.IdentityServer.Akc.Management.Api" Version="0.1.9-pullrequest0004-0002" />
+  </ItemGroup>
+
+</Project>
