@@ -59,5 +59,23 @@ namespace Duende.IdentityServer.Akc.Admin.Api
                 UserCodeType = dto.UserCodeType,
                 UserSsoLifetime = dto.UserSsoLifetime
             };
+
+        public static ClientOutputDto FromModel(this Client model) =>
+            new(
+                model.ClientId, model.ClientName, model.Description, model.Enabled, model.ProtocolType,
+                model.RequireClientSecret, model.ClientUri, model.LogoUri, model.RequireConsent,
+                model.AllowRememberConsent, model.RequirePkce,
+                model.AllowPlainTextPkce, model.AllowedGrantTypes.ToArray(), model.RedirectUris.ToArray(),
+                model.PostLogoutRedirectUris.ToArray(), model.RequireRequestObject, model.AllowAccessTokensViaBrowser,
+                model.FrontChannelLogoutUri, model.BackChannelLogoutUri, model.FrontChannelLogoutSessionRequired,
+                model.BackChannelLogoutSessionRequired, model.AllowOfflineAccess, model.AllowedScopes.ToArray(),
+                model.AlwaysIncludeUserClaimsInIdToken, model.IdentityTokenLifetime, model.AuthorizationCodeLifetime,
+                model.AllowedIdentityTokenSigningAlgorithms.ToArray(), model.AbsoluteRefreshTokenLifetime, model.AccessTokenLifetime,
+                model.SlidingRefreshTokenLifetime, model.ConsentLifetime, model.RefreshTokenUsage, model.UpdateAccessTokenClaimsOnRefresh,
+                model.RefreshTokenExpiration, model.AccessTokenType, model.EnableLocalLogin, model.IdentityProviderRestrictions.ToArray(),
+                model.IncludeJwtId, model.Claims.ToArray(), model.AlwaysSendClientClaims, model.ClientClaimsPrefix,
+                model.PairWiseSubjectSalt, model.UserSsoLifetime, model.UserCodeType, model.DeviceCodeLifetime,
+                model.CibaLifetime, model.PollingInterval, model.AllowedCorsOrigins.ToArray(), model.Properties
+            );
     }
 }

@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 namespace Duende.IdentityServer.Akc.Admin.Tests
 {
-    internal static class DefaultTestData
+    internal class DefaultTestData
     {
-        public static readonly IEnumerable<Client> Clients = new List<Client>()
+        public readonly IEnumerable<Client> Clients = new List<Client>()
         {
             new Client { ClientId = Guid.NewGuid().ToString() }
         };
 
-        public static readonly IEnumerable<IdentityResource> IdentityResources = new List<IdentityResource>()
+        public readonly IEnumerable<IdentityResource> IdentityResources = new List<IdentityResource>()
         {
             new IdentityResources.OpenId()
         };

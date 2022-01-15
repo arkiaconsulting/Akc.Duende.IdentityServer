@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -19,6 +18,7 @@ namespace Duende.IdentityServer.Akc.Admin.Tests
     {
         private HttpClient Client => _factory.CreateClient();
         private JsonSerializerOptions JsonOptions => _factory.Services.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
+        private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
 
         private readonly DefaultWebApplicationFactory _factory;
 
@@ -28,10 +28,10 @@ namespace Duende.IdentityServer.Akc.Admin.Tests
         [Fact(DisplayName = "Return stored clients")]
         public async Task Test01()
         {
-            var actualClients = await Client.GetFromJsonAsync<IEnumerable<ClientDto>>("api/clients");
+            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>("api/clients");
 
             actualClients.Should().BeEquivalentTo(
-                DefaultTestData.Clients,
+                TestData.Clients,
                 opts => opts.Excluding(c => c.ClientSecrets));
         }
 
@@ -41,7 +41,7 @@ namespace Duende.IdentityServer.Akc.Admin.Tests
         {
             using var _ = await Client.PutAsJsonAsync($"api/clients/{clientId}", client, options: JsonOptions);
 
-            var actualClients = await Client.GetFromJsonAsync<IEnumerable<ClientDto>>("api/clients");
+            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>("api/clients");
             actualClients.Should().ContainEquivalentOf(client).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
@@ -54,7 +54,7 @@ namespace Duende.IdentityServer.Akc.Admin.Tests
 
             using var _1 = Client.PostAsJsonAsync($"api/clients/{clientId}", updatedClient, options: JsonOptions);
 
-            var actualClients = await Client.GetFromJsonAsync<IEnumerable<ClientDto>>("api/clients");
+            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>("api/clients", options: JsonOptions);
             actualClients.Should().ContainEquivalentOf(updatedClient).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
