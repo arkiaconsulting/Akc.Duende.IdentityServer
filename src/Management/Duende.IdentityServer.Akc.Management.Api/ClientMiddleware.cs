@@ -2,119 +2,70 @@
 
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System.Net;
-using System.Text.Json;
 
 namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal class ClientMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ICollection<Client> _clients;
-
-        public ClientMiddleware(RequestDelegate next, IEnumerable<Client> clients)
+        public static Task<IEnumerable<ClientOutputDto>> Get(IEnumerable<Client> clients)
         {
-            _next = next;
-            if (clients is not ICollection<Client> clientStore)
-            {
-                throw new InvalidOperationException();
-            }
-            _clients = clientStore;
+            var dto = clients.Select(DtoExtensions.FromModel);
+
+            return dto.AsTask();
         }
 
-        public async Task Invoke(HttpContext context)
+        public static Task<IResult> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients)
         {
-            if (context.Request.IsGet())
-            {
-                await HandleGet(context);
+            var store = EnsureCollection(clients);
 
-                return;
+            store.Add(client.ToModel(clientId));
+
+            return Results.Created(HttpPipelineHelpers.FormatClientUri(clientId), default).AsTask();
+        }
+
+        public static Task<IResult> Delete(string clientId, IEnumerable<Client> clients)
+        {
+            var store = EnsureCollection(clients);
+
+            try
+            {
+                var client = store.Single(c => c.ClientId == clientId);
+
+                store.Remove(client);
             }
-            else if (context.Request.IsPut())
+            catch (InvalidOperationException)
             {
-                await HandlePut(context);
-
-                return;
-            }
-            else if (context.Request.IsPost())
-            {
-                await HandlePost(context);
-
-                return;
-            }
-            else if (context.Request.IsDelete())
-            {
-                await HandleDelete(context);
-
-                return;
+                // Intentionally left empty
             }
 
-            await _next(context);
+            return Results.Ok().AsTask();
+        }
+
+        public static Task<IResult> Update(string clientId, ClientInputDto client, IEnumerable<Client> clients)
+        {
+            var store = EnsureCollection(clients);
+
+            try
+            {
+                var existingClient = store.First(x => x.ClientId == clientId);
+                store.Remove(existingClient);
+
+                store.Add(client.ToModel(clientId));
+
+                return Results.Ok().AsTask();
+            }
+            catch (InvalidOperationException)
+            {
+                return Results.BadRequest().AsTask();
+            }
         }
 
         #region Private
 
-        private async Task HandlePost(HttpContext context)
-        {
-            var dto = await Deserialize<ClientInputDto>(context.Request);
-            if (dto == null)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                return;
-            }
-
-            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-
-            var existingClient = _clients.First(x => x.ClientId == clientId);
-            _clients.Remove(existingClient);
-
-            _clients.Add(dto.ToModel(clientId));
-        }
-
-        private async Task HandlePut(HttpContext context)
-        {
-            var dto = await Deserialize<ClientInputDto>(context.Request);
-            if (dto == null)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                return;
-            }
-
-            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-
-            _clients.Add(dto.ToModel(clientId));
-        }
-
-        private async Task HandleGet(HttpContext context)
-        {
-            var jsonOptions = context.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-
-            var dto = _clients.Select(DtoExtensions.FromModel);
-
-            await context.Response.WriteAsync(JsonSerializer.Serialize(dto, jsonOptions));
-        }
-
-        private Task HandleDelete(HttpContext context)
-        {
-            var clientId = context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).Last();
-
-            var client = _clients.Single(c => c.ClientId == clientId);
-
-            _clients.Remove(client);
-
-            return Task.CompletedTask;
-        }
-
-        private static async Task<T?> Deserialize<T>(HttpRequest request)
-        {
-            var jsonOptions = request.HttpContext.RequestServices.GetRequiredService<IOptions<JsonSerializerOptions>>().Value;
-
-            return await JsonSerializer.DeserializeAsync<T>(request.Body, jsonOptions);
-        }
+        private static ICollection<Client> EnsureCollection(IEnumerable<Client> clients) =>
+            clients is not ICollection<Client> clientStore
+            ? throw new InvalidOperationException()
+            : clientStore;
 
         #endregion
     }
