@@ -1,0 +1,59 @@
+name: NuGet Duende.IdentityServer.Akc.Management.Api
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/Management/Duende.IdentityServer.Akc.Management.Api/**'
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+            versionSpec: '5.x'
+
+      - uses: actions/checkout@v2
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+            useConfigFile: true
+            configFilePath: ./.github/gitversion.yml  
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Install dependencies
+        run: dotnet restore
+        working-directory: ./src/Management/Duende.IdentityServer.Akc.Management.Api/
+
+      - name: Build
+        run: |
+          dotnet build --configuration Release --no-restore \
+            /p:Version ${{ steps.gitversion.outputs.AssemblySemVer }} \
+            /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} \
+            /p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }}
+        working-directory: ./src/Management/Duende.IdentityServer.Akc.Management.Api/
+
+      - name: Test
+        run: |
+          dotnet test --configuration Release --no-build --no-restore --verbosity normal \
+            /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }}
+        working-directory: ./src/Management/Duende.IdentityServer.Akc.Management.Api/
+
+      - name: Push
+        run: |
+          dotnet pack --no-restore --output ./.nupkg --configuration Release --version-suffix \
+            /p:PackageVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
+          # dotnet nuget push \
+          #   --api-key ${{secrets.NUGET_API_KEY}} \
+          #   --source https://nuget.pkg.github.com/arkiaconsulting/index.json \
+          #   ./.nupkg/*
+        working-directory: ./src/Management/Duende.IdentityServer.Akc.Management.Api/
+        
