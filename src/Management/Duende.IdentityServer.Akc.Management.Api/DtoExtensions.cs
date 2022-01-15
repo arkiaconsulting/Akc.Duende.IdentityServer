@@ -2,7 +2,7 @@
 
 using Duende.IdentityServer.Models;
 
-namespace Duende.IdentityServer.Akc.Admin.Api
+namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal static class DtoExtensions
     {

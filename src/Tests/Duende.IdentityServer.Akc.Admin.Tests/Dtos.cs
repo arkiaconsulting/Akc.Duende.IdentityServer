@@ -3,7 +3,7 @@
 using Duende.IdentityServer.Models;
 using System.Collections.Generic;
 
-namespace Duende.IdentityServer.Akc.Admin.Tests
+namespace Duende.IdentityServer.Akc.Management.Tests
 {
     public record ClientDto(
         string ClientId,

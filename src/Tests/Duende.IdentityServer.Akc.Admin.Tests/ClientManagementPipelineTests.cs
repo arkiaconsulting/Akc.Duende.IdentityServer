@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Duende.IdentityServer.Akc.Admin.Tests
+namespace Duende.IdentityServer.Akc.Management.Tests
 {
     [Trait("Category", "Integration")]
     public class ClientManagementPipelineTests

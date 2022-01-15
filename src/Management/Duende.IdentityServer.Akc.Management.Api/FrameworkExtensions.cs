@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace Duende.IdentityServer.Akc.Admin.Api
+namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal static class FrameworkExtensions
     {

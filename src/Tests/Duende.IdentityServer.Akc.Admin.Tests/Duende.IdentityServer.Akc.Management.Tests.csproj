@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Admin\Duende.IdentityServer.Akc.Admin.Api\Duende.IdentityServer.Akc.Admin.Api.csproj" />
+	  <ProjectReference Include="..\..\Management\Duende.IdentityServer.Akc.Management.Api\Duende.IdentityServer.Akc.Management.Api.csproj" />
 	</ItemGroup>
 
 </Project>

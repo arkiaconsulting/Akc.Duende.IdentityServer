@@ -4,7 +4,7 @@ using Duende.IdentityServer.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Duende.IdentityServer.Akc.Admin.Tests
+namespace Duende.IdentityServer.Akc.Management.Tests
 {
     internal class DefaultTestData
     {
