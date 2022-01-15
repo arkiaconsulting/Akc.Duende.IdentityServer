@@ -8,11 +8,18 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 {
     internal class TestProgram
     {
+        public const string BasePath = "/my/clients";
+
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             var testData = new DefaultTestData();
+
+            builder.Services.Configure<ManagementApiOptions>(options =>
+            {
+                options.BasePath = BasePath;
+            });
 
             builder.Services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
@@ -25,7 +32,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             app.UseIdentityServer();
 
-            app.AddIdentityServerClientApi();
+            app.UseIdentityServerClientApi();
 
             app.Run();
         }

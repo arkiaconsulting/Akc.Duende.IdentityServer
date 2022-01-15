@@ -2,17 +2,21 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Duende.IdentityServer.Akc.Management.Api
 {
     public static class HttpPipelineExtensions
     {
-        public static IEndpointRouteBuilder AddIdentityServerClientApi(this IEndpointRouteBuilder app)
+        public static IEndpointRouteBuilder UseIdentityServerClientApi(this IEndpointRouteBuilder app)
         {
-            app.MapGet(Constants.Paths.Clients, ClientMiddleware.Get);
-            app.MapPut($"{Constants.Paths.Clients}/{{clientId}}", ClientMiddleware.Create);
-            app.MapPost($"{Constants.Paths.Clients}/{{clientId}}", ClientMiddleware.Update);
-            app.MapDelete($"{Constants.Paths.Clients}/{{clientId}}", ClientMiddleware.Delete);
+            var options = app.ServiceProvider.GetRequiredService<IOptions<ManagementApiOptions>>().Value;
+
+            app.MapGet(options.BasePath, ClientMiddleware.Get);
+            app.MapPut($"{options.BasePath}/{{clientId}}", ClientMiddleware.Create);
+            app.MapPost($"{options.BasePath}/{{clientId}}", ClientMiddleware.Update);
+            app.MapDelete($"{options.BasePath}/{{clientId}}", ClientMiddleware.Delete);
 
             return app;
         }

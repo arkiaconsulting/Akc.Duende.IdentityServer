@@ -1,7 +1,6 @@
 // This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
 
 using AutoFixture.Xunit2;
-using Duende.IdentityServer.Akc.Management.Api;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,7 +22,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         public ClientManagementPipelineTests()
         {
             _factory = new DefaultWebApplicationFactory();
-            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{Constants.Paths.Clients}/") });
+            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/") });
         }
 
         [Fact(DisplayName = "Return stored clients")]
