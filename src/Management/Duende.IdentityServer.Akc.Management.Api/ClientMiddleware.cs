@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text.Json;
 
-namespace Duende.IdentityServer.Akc.Admin.Api
+namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal class ClientMiddleware
     {

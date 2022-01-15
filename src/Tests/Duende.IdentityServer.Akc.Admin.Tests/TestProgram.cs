@@ -1,10 +1,10 @@
 ﻿// This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
 
-using Duende.IdentityServer.Akc.Admin.Api;
+using Duende.IdentityServer.Akc.Management.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Duende.IdentityServer.Akc.Admin.Tests
+namespace Duende.IdentityServer.Akc.Management.Tests
 {
     internal class TestProgram
     {

@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Builder;
 
-namespace Duende.IdentityServer.Akc.Admin.Api
+namespace Duende.IdentityServer.Akc.Management.Api
 {
     public static class HttpPipelineExtensions
     {

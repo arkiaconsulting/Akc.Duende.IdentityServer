@@ -3,15 +3,17 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<PackageId>Duende.IdentityServer.Akc.Admin.Api</PackageId>
+		<PackageId>Duende.IdentityServer.Akc.Management.Api</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Louis GERARD</Authors>
 		<Company>Arkia Consulting</Company>
-		<PackageTags>IdentityServer;Duende;Admin;Akc</PackageTags>
+		<PackageTags>IdentityServer;Duende;Admin;Akc;Management</PackageTags>
 		<Description>
 			This client library enables working with Duende IdentityServer for managing resources
 			using REST Api.
 		</Description>
+		<RootNamespace>Duende.IdentityServer.Akc.Management.Api</RootNamespace>
+		<AssemblyName>Duende.IdentityServer.Akc.Management.Api</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
