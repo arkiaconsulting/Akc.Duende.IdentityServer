@@ -12,19 +12,26 @@
 			This client library enables working with Duende IdentityServer for managing resources
 			using REST Api.
 		</Description>
+		<RepositoryUrl>https://github.com/arkiaconsulting/Duende.IdentityServer.Akc</RepositoryUrl>
+		<RepositoryType>https://github.com/arkiaconsulting/Duende.IdentityServer.Akc</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIconUrl />
+		<PackageIcon>icon.png</PackageIcon>
 		<RootNamespace>Duende.IdentityServer.Akc.Management.Api</RootNamespace>
 		<AssemblyName>Duende.IdentityServer.Akc.Management.Api</AssemblyName>
+		<PackageOutputPath>./.nupkg</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Duende.IdentityServer.Storage" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	
 </Project>

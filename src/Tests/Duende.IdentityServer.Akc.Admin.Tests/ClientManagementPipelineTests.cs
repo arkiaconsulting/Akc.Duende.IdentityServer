@@ -3,13 +3,10 @@
 using AutoFixture.Xunit2;
 using Duende.IdentityServer.Akc.Management.Api;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,7 +16,6 @@ namespace Duende.IdentityServer.Akc.Management.Tests
     public class ClientManagementPipelineTests
     {
         private HttpClient Client { get; }
-        private JsonSerializerOptions JsonOptions => _factory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
         private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
 
         private readonly DefaultWebApplicationFactory _factory;
