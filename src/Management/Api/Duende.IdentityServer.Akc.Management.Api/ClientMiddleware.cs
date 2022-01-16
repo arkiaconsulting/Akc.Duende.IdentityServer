@@ -20,54 +20,34 @@ namespace Duende.IdentityServer.Akc.Management.Api
         }
 
         public static Task<IR> Get(string clientId, [FromServices] IClientManagementStore store) =>
-            store.Get(clientId).Match(
+            store.Get(clientId)
+            .Match(
                 onSuccess: client => Results.Ok(client.FromModel()),
                 onFailure: e => Results.BadRequest()
             );
 
-        public static Task<IR> Create(string clientId, ClientInputDto client, [FromServices] IClientManagementStore store, IOptions<ManagementApiOptions> options) =>
+        public static Task<IR> Create(string clientId, ClientInputDto client, [FromServices] IClientManagementStore store, [FromServices] IOptions<ManagementApiOptions> options) =>
             store.Create(client.ToModel(clientId))
-                .Match(
+            .Match(
                 onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default),
                 onFailure: e => throw new NotImplementedException()
             );
 
-        public static Task<IR> Delete(string clientId, IEnumerable<Client> clients)
-        {
-            var store = EnsureCollection(clients);
+        public static Task<IR> Delete(string clientId, [FromServices] IClientManagementStore store) =>
+            store.Get(clientId)
+            .Bind(c => store.Delete(clientId))
+            .Match(
+                onSuccess: () => Results.Ok(),
+                onFailure: e => Results.NotFound()
+            );
 
-            try
-            {
-                var client = store.Single(c => c.ClientId == clientId);
-
-                store.Remove(client);
-            }
-            catch (InvalidOperationException)
-            {
-                return Results.NotFound().AsTask();
-            }
-
-            return Results.Ok().AsTask();
-        }
-
-        public static Task<IR> Update(string clientId, ClientInputDto client, IEnumerable<Client> clients)
-        {
-            var store = EnsureCollection(clients);
-
-            try
-            {
-                var existingClient = store.First(x => x.ClientId == clientId);
-                store.Remove(existingClient);
-
-                store.Add(client.ToModel(clientId));
-
-                return Results.Ok().AsTask();
-            }
-            catch (InvalidOperationException)
-            {
-                return Results.NotFound().AsTask();
-            }
-        }
+        public static Task<IR> Update(string clientId, ClientInputDto client, [FromServices] IClientManagementStore store) =>
+            store.Get(clientId)
+            .Bind(_ => store.Update(clientId, client.ToModel(clientId)))
+            .Match(
+                onSuccess: () => Results.Ok(),
+                onFailure: e => Results.NotFound()
+            );
 
         public static Task<IR> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
         {
