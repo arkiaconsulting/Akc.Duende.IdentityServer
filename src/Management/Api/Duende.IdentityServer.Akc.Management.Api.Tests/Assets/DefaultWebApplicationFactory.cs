@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace Duende.IdentityServer.Akc.Management.Api.Tests
+namespace Duende.IdentityServer.Akc.Management.Api.Tests.Assets
 {
     internal class DefaultWebApplicationFactory : WebApplicationFactory<TestProgram>
     {

@@ -1,6 +1,7 @@
 // This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
 
 using AutoFixture.Xunit2;
+using Duende.IdentityServer.Akc.Management.Api.Tests.Assets;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
