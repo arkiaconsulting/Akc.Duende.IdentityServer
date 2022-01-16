@@ -8,11 +8,25 @@ namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal class ClientMiddleware
     {
-        public static Task<IEnumerable<ClientOutputDto>> Get(IEnumerable<Client> clients)
+        public static Task<IEnumerable<ClientOutputDto>> GetAll(IEnumerable<Client> clients)
         {
             var dto = clients.Select(DtoExtensions.FromModel);
 
             return dto.AsTask();
+        }
+
+        public static Task<IResult> Get(string clientId, IEnumerable<Client> clients)
+        {
+            try
+            {
+                var client = clients.Single(c => c.ClientId == clientId);
+
+                return Results.Ok(client.FromModel()).AsTask();
+            }
+            catch (InvalidOperationException)
+            {
+                return Results.BadRequest().AsTask();
+            }
         }
 
         public static Task<IResult> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients)

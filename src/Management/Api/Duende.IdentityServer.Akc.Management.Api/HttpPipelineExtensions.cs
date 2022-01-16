@@ -13,7 +13,8 @@ namespace Duende.IdentityServer.Akc.Management.Api
         {
             var options = app.ServiceProvider.GetRequiredService<IOptions<ManagementApiOptions>>().Value;
 
-            app.MapGet(options.BasePath, ClientMiddleware.Get);
+            app.MapGet(options.BasePath, ClientMiddleware.GetAll);
+            app.MapGet($"{options.BasePath}/{{clientId}}", ClientMiddleware.Get);
             app.MapPut($"{options.BasePath}/{{clientId}}", ClientMiddleware.Create);
             app.MapPost($"{options.BasePath}/{{clientId}}", ClientMiddleware.Update);
             app.MapDelete($"{options.BasePath}/{{clientId}}", ClientMiddleware.Delete);

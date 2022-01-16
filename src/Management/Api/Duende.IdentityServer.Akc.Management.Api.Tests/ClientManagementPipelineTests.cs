@@ -5,6 +5,7 @@ using Duende.IdentityServer.Akc.Management.Api.Tests.Assets;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -204,6 +205,30 @@ namespace Duende.IdentityServer.Akc.Management.Api.Tests
             response.Should().Be400BadRequest();
         }
 
+        [Theory(DisplayName = "Pass when getting a client")]
+        [Trait("Category", "CLIENT")]
+        [InlineAutoData]
+        public async Task Test6(ClientCreateDto client, string clientId)
+        {
+            using var _ = await CreateClient(clientId, client);
+
+            var actualClient = await GetClient(clientId);
+
+            actualClient.Should().BeEquivalentTo(client);
+            actualClient!.ClientId.Should().Be(clientId);
+        }
+
+        [Theory(DisplayName = "Fail when getting a client that does not exist")]
+        [Trait("Category", "CLIENT")]
+        [InlineAutoData]
+        public async Task Test61(string clientId)
+        {
+            Func<Task> f = () => GetClient(clientId);
+
+            await f.Should().ThrowAsync<HttpRequestException>()
+                .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+        }
+
         #region Private
 
         private Task<HttpResponseMessage> CreateClient(string clientId, ClientCreateDto dto) =>
@@ -211,6 +236,9 @@ namespace Duende.IdentityServer.Akc.Management.Api.Tests
 
         private Task<ClientDto[]?> GetClients() =>
             Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+
+        private Task<ClientDto?> GetClient(string clientId) =>
+            Client.GetFromJsonAsync<ClientDto>($"{clientId}");
 
         private Task<HttpResponseMessage> UpdateClient(string clientId, ClientUpdateDto dto) =>
             Client.PostAsJsonAsync($"{clientId}", dto);
