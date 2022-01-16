@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 
-namespace Duende.IdentityServer.Akc.Management.Api.Tests
+namespace Duende.IdentityServer.Akc.Management.Api.Tests.Assets
 {
     internal class TestProgram
     {
