@@ -18,6 +18,10 @@ namespace Duende.IdentityServer.Akc.Management.Api
             app.MapPost($"{options.BasePath}/{{clientId}}", ClientMiddleware.Update);
             app.MapDelete($"{options.BasePath}/{{clientId}}", ClientMiddleware.Delete);
 
+            app.MapPut($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.AddSecret);
+            app.MapPost($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.UpdateSecret);
+            app.MapDelete($"{options.BasePath}/{{clientId}}/secrets/{{type}}/{{value}}", ClientMiddleware.DeleteSecret);
+
             return app;
         }
     }
