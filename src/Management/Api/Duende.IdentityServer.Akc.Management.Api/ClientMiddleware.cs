@@ -25,14 +25,12 @@ namespace Duende.IdentityServer.Akc.Management.Api
                 onFailure: e => Results.BadRequest()
             );
 
-        public static Task<IR> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients, IOptions<ManagementApiOptions> options)
-        {
-            var store = EnsureCollection(clients);
-
-            store.Add(client.ToModel(clientId));
-
-            return Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default).AsTask();
-        }
+        public static Task<IR> Create(string clientId, ClientInputDto client, [FromServices] IClientManagementStore store, IOptions<ManagementApiOptions> options) =>
+            store.Create(client.ToModel(clientId))
+                .Match(
+                onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default),
+                onFailure: e => throw new NotImplementedException()
+            );
 
         public static Task<IR> Delete(string clientId, IEnumerable<Client> clients)
         {

@@ -25,5 +25,12 @@ namespace Duende.IdentityServer.Akc.Management.Api
 
             return (client ?? Result.Failure<Client>($"No client found with Id '{clientId}'")).AsTask();
         }
+
+        public Task<Result> Create(Client client)
+        {
+            _clients.Add(client);
+
+            return Result.Success().AsTask();
+        }
     }
 }
