@@ -20,6 +20,7 @@ namespace Duende.IdentityServer.Akc.Management.Api.Tests.Assets
 
             var testData = new DefaultTestData();
 
+            builder.Services.AddInMemoryClientManagementApi();
             builder.Services.Configure<ManagementApiOptions>(options =>
             {
                 options.BasePath = BasePath;
