@@ -240,7 +240,7 @@ dotnet_naming_style.non_private_static_field_style.capitalization = pascal_case
 
 # Sonar false positive when throwing from lambda
 dotnet_diagnostic.S3626.severity = silent
-file_header_template = This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
+file_header_template = This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
 dotnet_analyzer_diagnostic.severity = default
 
