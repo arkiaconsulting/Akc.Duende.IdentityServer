@@ -1,9 +1,12 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
+using CSharpFunctionalExtensions;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Net;
+using IR = Microsoft.AspNetCore.Http.IResult;
 
 namespace Duende.IdentityServer.Akc.Management.Api
 {
@@ -16,21 +19,13 @@ namespace Duende.IdentityServer.Akc.Management.Api
             return dto.AsTask();
         }
 
-        public static Task<IResult> Get(string clientId, IEnumerable<Client> clients)
-        {
-            try
-            {
-                var client = clients.Single(c => c.ClientId == clientId);
+        public static Task<IR> Get(string clientId, [FromServices] IClientManagementStore store) =>
+            store.Get(clientId).Match(
+                onSuccess: client => Results.Ok(client.FromModel()),
+                onFailure: e => Results.BadRequest()
+            );
 
-                return Results.Ok(client.FromModel()).AsTask();
-            }
-            catch (InvalidOperationException)
-            {
-                return Results.BadRequest().AsTask();
-            }
-        }
-
-        public static Task<IResult> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients, IOptions<ManagementApiOptions> options)
+        public static Task<IR> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients, IOptions<ManagementApiOptions> options)
         {
             var store = EnsureCollection(clients);
 
@@ -39,7 +34,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             return Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default).AsTask();
         }
 
-        public static Task<IResult> Delete(string clientId, IEnumerable<Client> clients)
+        public static Task<IR> Delete(string clientId, IEnumerable<Client> clients)
         {
             var store = EnsureCollection(clients);
 
@@ -57,7 +52,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             return Results.Ok().AsTask();
         }
 
-        public static Task<IResult> Update(string clientId, ClientInputDto client, IEnumerable<Client> clients)
+        public static Task<IR> Update(string clientId, ClientInputDto client, IEnumerable<Client> clients)
         {
             var store = EnsureCollection(clients);
 
@@ -76,7 +71,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             }
         }
 
-        public static Task<IResult> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
+        public static Task<IR> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
         {
             var store = EnsureCollection(clients);
             try
@@ -95,7 +90,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             }
         }
 
-        public static Task<IResult> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
+        public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
         {
             var store = EnsureCollection(clients);
 
@@ -117,7 +112,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             }
         }
 
-        public static Task<IResult> DeleteSecret(string clientId, string type, string value, IEnumerable<Client> clients)
+        public static Task<IR> DeleteSecret(string clientId, string type, string value, IEnumerable<Client> clients)
         {
             var store = EnsureCollection(clients);
 
