@@ -1,0 +1,1 @@
+[![NuGet Duende.IdentityServer.Akc.Management.Api](https://github.com/arkiaconsulting/Duende.IdentityServer.Akc/actions/workflows/duende-is-mngt-api.yml/badge.svg)](https://github.com/arkiaconsulting/Duende.IdentityServer.Akc/actions/workflows/duende-is-mngt-api.yml)

@@ -9,7 +9,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Duende.IdentityServer.Akc.Management.Tests
+namespace Duende.IdentityServer.Akc.Management.Api.Tests
 {
     [Trait("Category", "Integration")]
     public class ClientManagementPipelineTests
