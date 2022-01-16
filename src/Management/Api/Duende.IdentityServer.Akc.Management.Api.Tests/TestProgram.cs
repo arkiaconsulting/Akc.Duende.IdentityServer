@@ -1,10 +1,10 @@
 ﻿// This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
 
-using Duende.IdentityServer.Akc.Management.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
-namespace Duende.IdentityServer.Akc.Management.Tests
+namespace Duende.IdentityServer.Akc.Management.Api.Tests
 {
     internal class TestProgram
     {
@@ -12,7 +12,11 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
         private static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = Path.GetFullPath(Directory.GetCurrentDirectory()),
+                Args = args
+            });
 
             var testData = new DefaultTestData();
 
