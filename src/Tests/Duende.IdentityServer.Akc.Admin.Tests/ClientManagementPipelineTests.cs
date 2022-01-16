@@ -27,14 +27,10 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
         [Fact(DisplayName = "Return stored clients")]
         [Trait("Category", "CLIENT")]
-        public async Task Test01()
-        {
-            var actualClients = await GetClients();
-
-            actualClients.Should().BeEquivalentTo(
+        public async Task Test01() =>
+            (await GetClients()).Should().BeEquivalentTo(
                 TestData.Clients,
                 opts => opts.Excluding(c => c.ClientSecrets));
-        }
 
         [Theory(DisplayName = "Add a new client")]
         [Trait("Category", "CLIENT")]
@@ -43,8 +39,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         {
             using var _ = await CreateClient(clientId, client);
 
-            var actualClients = await GetClients();
-            actualClients.Should().ContainEquivalentOf(client).Subject
+            (await GetClients()).Should().ContainEquivalentOf(client).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
@@ -57,8 +52,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var _1 = await UpdateClient(clientId, updatedClient);
 
-            var actualClients = await GetClients();
-            actualClients.Should().ContainEquivalentOf(updatedClient).Subject
+            (await GetClients()).Should().ContainEquivalentOf(updatedClient).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
@@ -69,7 +63,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         {
             using var response = await UpdateClient(clientId, updatedClient);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+            response.Should().Be404NotFound();
         }
 
         [Theory(DisplayName = "Delete an existing client")]
@@ -81,8 +75,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var _1 = await DeleteClient(clientId);
 
-            var actualClients = await GetClients();
-            actualClients.Should().NotContainEquivalentOf(existingClient);
+            (await GetClients()).Should().NotContainEquivalentOf(existingClient);
         }
 
         [Theory(DisplayName = "Delete an existing client that does not exist")]
@@ -92,7 +85,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         {
             using var response = await DeleteClient(clientId);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+            response.Should().Be404NotFound();
         }
 
         [Theory(DisplayName = "Add a new client secret to an existing client")]
@@ -105,7 +98,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await CreateClientSecret(clientId, secretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+            response.Should().Be201Created();
         }
 
         [Theory(DisplayName = "Fail adding a client secret when the client does not exist")]
@@ -117,7 +110,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await CreateClientSecret(clientId, secretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.Should().Be400BadRequest();
         }
 
         [Theory(DisplayName = "Pass when adding a client secret that already exists")]
@@ -131,7 +124,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await CreateClientSecret(clientId, secretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            response.Should().Be200Ok();
         }
 
         [Theory(DisplayName = "Pass when updating a client secret")]
@@ -146,7 +139,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await UpdateClientSecret(clientId, updateSecretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            response.Should().Be200Ok();
         }
 
         [Theory(DisplayName = "Fail when updating a client secret and the client does not exists")]
@@ -158,7 +151,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await UpdateClientSecret(clientId, updateSecretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.Should().Be400BadRequest();
         }
 
         [Theory(DisplayName = "Fail when updating a client secret that does not exist")]
@@ -171,7 +164,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await UpdateClientSecret(clientId, updateSecretDto);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+            response.Should().Be404NotFound();
         }
 
         [Theory(DisplayName = "Pass when deleting a client secret")]
@@ -185,7 +178,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            response.Should().Be200Ok();
         }
 
         [Theory(DisplayName = "Fail when deleting a client secret that does not exists")]
@@ -197,7 +190,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
 
             using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+            response.Should().Be404NotFound();
         }
 
         [Theory(DisplayName = "Fail when deleting a client secret and the client does not exists")]
@@ -207,7 +200,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         {
             using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.Should().Be400BadRequest();
         }
 
         #region Private
