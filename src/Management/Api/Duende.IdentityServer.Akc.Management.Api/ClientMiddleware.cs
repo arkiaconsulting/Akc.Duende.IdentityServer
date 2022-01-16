@@ -2,6 +2,7 @@
 
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace Duende.IdentityServer.Akc.Management.Api
@@ -29,13 +30,13 @@ namespace Duende.IdentityServer.Akc.Management.Api
             }
         }
 
-        public static Task<IResult> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients)
+        public static Task<IResult> Create(string clientId, ClientInputDto client, IEnumerable<Client> clients, IOptions<ManagementApiOptions> options)
         {
             var store = EnsureCollection(clients);
 
             store.Add(client.ToModel(clientId));
 
-            return Results.Created(HttpPipelineHelpers.FormatClientUri(clientId), default).AsTask();
+            return Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default).AsTask();
         }
 
         public static Task<IResult> Delete(string clientId, IEnumerable<Client> clients)

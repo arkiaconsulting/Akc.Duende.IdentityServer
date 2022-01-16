@@ -4,7 +4,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal static class HttpPipelineHelpers
     {
-        public static string FormatClientUri(string clientId) =>
-            string.Format("{0}/{1}", Constants.Paths.Clients, clientId);
+        public static string FormatClientUri(string clientId, ManagementApiOptions options) =>
+            string.Format("{0}/{1}", options.BasePath, clientId);
     }
 }
