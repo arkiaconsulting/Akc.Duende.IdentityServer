@@ -15,8 +15,8 @@ namespace Duende.IdentityServer.Akc.Management.Tests
     public class ClientManagementPipelineTests
     {
         private HttpClient Client { get; }
+        private string AnySecretType { get; } = "AnySecretType";
         private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
-
         private readonly DefaultWebApplicationFactory _factory;
 
         public ClientManagementPipelineTests()
@@ -26,9 +26,10 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         }
 
         [Fact(DisplayName = "Return stored clients")]
+        [Trait("Category", "CLIENT")]
         public async Task Test01()
         {
-            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+            var actualClients = await GetClients();
 
             actualClients.Should().BeEquivalentTo(
                 TestData.Clients,
@@ -36,57 +37,202 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         }
 
         [Theory(DisplayName = "Add a new client")]
+        [Trait("Category", "CLIENT")]
         [InlineAutoData]
-        public async Task Test02(ClientCreateDto client, Guid clientId)
+        public async Task Test02(ClientCreateDto client, string clientId)
         {
-            using var _ = await Client.PutAsJsonAsync($"{clientId}", client);
+            using var _ = await CreateClient(clientId, client);
 
-            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+            var actualClients = await GetClients();
             actualClients.Should().ContainEquivalentOf(client).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
         [Theory(DisplayName = "Update an existing client")]
+        [Trait("Category", "CLIENT")]
         [InlineAutoData]
-        public async Task Test03(ClientCreateDto existingClient, ClientUpdateDto updatedClient, Guid clientId)
+        public async Task Test03(ClientCreateDto existingClient, ClientUpdateDto updatedClient, string clientId)
         {
-            _ = await Client.PutAsJsonAsync($"{clientId}", existingClient);
+            _ = await CreateClient(clientId, existingClient);
 
-            using var _1 = await Client.PostAsJsonAsync($"{clientId}", updatedClient);
+            using var _1 = await UpdateClient(clientId, updatedClient);
 
-            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+            var actualClients = await GetClients();
             actualClients.Should().ContainEquivalentOf(updatedClient).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
         [Theory(DisplayName = "Update a client that does not exist")]
+        [Trait("Category", "CLIENT")]
         [InlineAutoData]
-        public async Task Test031(ClientUpdateDto updatedClient, Guid clientId)
+        public async Task Test031(ClientUpdateDto updatedClient, string clientId)
         {
-            using var response = await Client.PostAsJsonAsync($"{clientId}", updatedClient);
+            using var response = await UpdateClient(clientId, updatedClient);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Theory(DisplayName = "Delete an existing client")]
+        [Trait("Category", "CLIENT")]
         [InlineAutoData]
-        public async Task Test04(ClientCreateDto existingClient, Guid clientId)
+        public async Task Test04(ClientCreateDto existingClient, string clientId)
         {
-            _ = await Client.PutAsJsonAsync($"{clientId}", existingClient);
+            _ = await CreateClient(clientId, existingClient);
 
-            using var _1 = await Client.DeleteAsync($"{clientId}");
+            using var _1 = await DeleteClient(clientId);
 
-            var actualClients = await Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+            var actualClients = await GetClients();
             actualClients.Should().NotContainEquivalentOf(existingClient);
         }
 
         [Theory(DisplayName = "Delete an existing client that does not exist")]
+        [Trait("Category", "CLIENT")]
         [InlineAutoData]
-        public async Task Test041(Guid clientId)
+        public async Task Test041(string clientId)
         {
-            using var response = await Client.DeleteAsync($"{clientId}");
+            using var response = await DeleteClient(clientId);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Theory(DisplayName = "Add a new client secret to an existing client")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test05(ClientCreateDto existingClient, string clientId, string secret, DateTime secretExpiry)
+        {
+            var secretDto = new CreateClientSecretDto(AnySecretType, secret, secretExpiry);
+            _ = await CreateClient(clientId, existingClient);
+
+            using var response = await CreateClientSecret(clientId, secretDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        }
+
+        [Theory(DisplayName = "Fail adding a client secret when the client does not exist")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test051(string clientId, string secret, DateTime secretExpiry)
+        {
+            var secretDto = new CreateClientSecretDto(AnySecretType, secret, secretExpiry);
+
+            using var response = await CreateClientSecret(clientId, secretDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Theory(DisplayName = "Pass when adding a client secret that already exists")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test052(ClientCreateDto existingClient, string clientId, string secret, DateTime secretExpiry)
+        {
+            var secretDto = new CreateClientSecretDto(AnySecretType, secret, secretExpiry);
+            _ = await CreateClient(clientId, existingClient);
+            _ = await CreateClientSecret(clientId, secretDto);
+
+            using var response = await CreateClientSecret(clientId, secretDto);
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         }
+
+        [Theory(DisplayName = "Pass when updating a client secret")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test053(ClientCreateDto existingClient, string clientId, string secret, string newSecret, DateTime newExpiry)
+        {
+            var initialSecretDto = new CreateClientSecretDto(AnySecretType, secret, default);
+            var updateSecretDto = new UpdateClientSecretDto(AnySecretType, secret, newSecret, newExpiry);
+            _ = await CreateClient(clientId, existingClient);
+            _ = await CreateClientSecret(clientId, initialSecretDto);
+
+            using var response = await UpdateClientSecret(clientId, updateSecretDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Theory(DisplayName = "Fail when updating a client secret and the client does not exists")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test054(string clientId, string secret, string newSecret, DateTime newExpiry)
+        {
+            var updateSecretDto = new UpdateClientSecretDto(AnySecretType, secret, newSecret, newExpiry);
+
+            using var response = await UpdateClientSecret(clientId, updateSecretDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Theory(DisplayName = "Fail when updating a client secret that does not exist")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test055(ClientCreateDto existingClient, string clientId, string secret, string newSecret, DateTime newExpiry)
+        {
+            var updateSecretDto = new UpdateClientSecretDto(AnySecretType, secret, newSecret, newExpiry);
+            _ = await CreateClient(clientId, existingClient);
+
+            using var response = await UpdateClientSecret(clientId, updateSecretDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Theory(DisplayName = "Pass when deleting a client secret")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test056(ClientCreateDto existingClient, string clientId, string secret)
+        {
+            var secretDto = new CreateClientSecretDto(AnySecretType, secret, default);
+            _ = await CreateClient(clientId, existingClient);
+            _ = await CreateClientSecret(clientId, secretDto);
+
+            using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Theory(DisplayName = "Fail when deleting a client secret that does not exists")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test057(ClientCreateDto existingClient, string clientId, string secret)
+        {
+            _ = await CreateClient(clientId, existingClient);
+
+            using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Theory(DisplayName = "Fail when deleting a client secret and the client does not exists")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test058(string clientId, string secret)
+        {
+            using var response = await DeleteClientSecret(clientId, AnySecretType, secret);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        #region Private
+
+        private Task<HttpResponseMessage> CreateClient(string clientId, ClientCreateDto dto) =>
+            Client.PutAsJsonAsync($"{clientId}", dto);
+
+        private Task<ClientDto[]?> GetClients() =>
+            Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
+
+        private Task<HttpResponseMessage> UpdateClient(string clientId, ClientUpdateDto dto) =>
+            Client.PostAsJsonAsync($"{clientId}", dto);
+
+        private Task<HttpResponseMessage> DeleteClient(string clientId) =>
+            Client.DeleteAsync($"{clientId}");
+
+        private Task<HttpResponseMessage> CreateClientSecret(string clientId, CreateClientSecretDto dto) =>
+            Client.PutAsJsonAsync($"{clientId}/secrets", dto);
+
+        private Task<HttpResponseMessage> UpdateClientSecret(string clientId, UpdateClientSecretDto dto) =>
+            Client.PostAsJsonAsync($"{clientId}/secrets", dto);
+
+        private Task<HttpResponseMessage> DeleteClientSecret(string clientId, string type, string secret) =>
+            Client.DeleteAsync($"{clientId}/secrets/{type}/{secret}");
+
+        #endregion
     }
 }

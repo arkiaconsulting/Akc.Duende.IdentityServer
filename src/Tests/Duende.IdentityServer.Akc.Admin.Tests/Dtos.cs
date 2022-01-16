@@ -1,6 +1,7 @@
 ﻿// This code is under Copyright (C) 2021 of Arkia Consulting SARL all right reserved
 
 using Duende.IdentityServer.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Duende.IdentityServer.Akc.Management.Tests
@@ -155,4 +156,7 @@ namespace Duende.IdentityServer.Akc.Management.Tests
         int? PollingInterval,
         string[] AllowedCorsOrigins,
         IDictionary<string, string> Properties);
+
+    public record CreateClientSecretDto(string Type, string Value, DateTime? Expiration);
+    public record UpdateClientSecretDto(string Type, string Value, string NewValue, DateTime? Expiration);
 }

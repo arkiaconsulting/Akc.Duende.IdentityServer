@@ -77,5 +77,8 @@ namespace Duende.IdentityServer.Akc.Management.Api
                 model.PairWiseSubjectSalt, model.UserSsoLifetime, model.UserCodeType, model.DeviceCodeLifetime,
                 model.CibaLifetime, model.PollingInterval, model.AllowedCorsOrigins.ToArray(), model.Properties
             );
+
+        public static Secret ToModel(this CreateClientSecretInputDto dto) =>
+            new(dto.Value, dto.Expiration) { Type = dto.Type };
     }
 }
