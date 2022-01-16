@@ -9,5 +9,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
     {
         Task<Result<Client>> Get(string clientId);
         Task<Result> Create(Client client);
+        Task<Result> Delete(string clientId);
+        Task<Result> Update(string clientId, Client client);
     }
 }

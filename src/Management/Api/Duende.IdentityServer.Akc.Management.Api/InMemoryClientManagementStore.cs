@@ -7,28 +7,44 @@ namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal class InMemoryClientManagementStore : IClientManagementStore
     {
-        private readonly ICollection<Client> _clients;
+        private ICollection<Client> Clients => _clients
+            ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");
 
-        public InMemoryClientManagementStore(IEnumerable<Client> clients)
-        {
-            if (clients is not ICollection<Client> collection)
-            {
-                throw new InvalidOperationException();
-            }
+        private readonly ICollection<Client>? _clients;
 
-            _clients = collection;
-        }
+        public InMemoryClientManagementStore(IEnumerable<Client> clients) =>
+            _clients = clients as ICollection<Client>;
 
         public Task<Result<Client>> Get(string clientId)
         {
-            var client = _clients.SingleOrDefault(c => c.ClientId == clientId);
+            var client = Clients.SingleOrDefault(c => c.ClientId == clientId);
 
             return (client ?? Result.Failure<Client>($"No client found with Id '{clientId}'")).AsTask();
         }
 
         public Task<Result> Create(Client client)
         {
-            _clients.Add(client);
+            Clients.Add(client);
+
+            return Result.Success().AsTask();
+        }
+
+        public Task<Result> Delete(string clientId)
+        {
+            var client = Clients.Single(c => c.ClientId == clientId);
+
+            Clients.Remove(client);
+
+            return Result.Success().AsTask();
+        }
+
+        public Task<Result> Update(string clientId, Client client)
+        {
+            var existingClient = Clients.Single(c => c.ClientId == clientId);
+
+            Clients.Remove(existingClient);
+
+            Clients.Add(client);
 
             return Result.Success().AsTask();
         }
