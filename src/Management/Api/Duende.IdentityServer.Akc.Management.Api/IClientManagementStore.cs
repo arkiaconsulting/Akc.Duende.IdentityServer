@@ -8,5 +8,6 @@ namespace Duende.IdentityServer.Akc.Management.Api
     internal interface IClientManagementStore
     {
         Task<Result<Client>> Get(string clientId);
+        Task<Result> Create(Client client);
     }
 }
