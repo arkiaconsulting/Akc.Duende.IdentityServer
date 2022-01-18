@@ -62,27 +62,19 @@ namespace Duende.IdentityServer.Akc.Management.Api
                 }
             );
 
-        public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, IEnumerable<Client> clients)
-        {
-            var store = EnsureCollection(clients);
-
-            try
-            {
-                var client = store.Single(c => c.ClientId == clientId);
-                if (!(client.ClientSecrets as HashSet<Secret>)!.TryGetValue(new Secret(clientSecret.Value) { Type = clientSecret.Type }, out var existingSecret))
+        public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
+            store.Get(clientId)
+            .Bind(client => store.GetSecret(client.ClientId, clientSecret.Type, clientSecret.Value))
+            .Tap(() => store.UpdateSecret(clientId, clientSecret.Type, clientSecret.Value, clientSecret.NewValue))
+            .Match(
+                onSuccess: _ => Results.Ok(),
+                onFailure: e => e switch
                 {
-                    return Results.NotFound().AsTask();
+                    Errors.ClientSecretNotFound => Results.NotFound(),
+                    Errors.ClientNotFound => Results.BadRequest(),
+                    _ => Results.BadRequest()
                 }
-
-                existingSecret.Value = clientSecret.NewValue;
-
-                return Results.Ok().AsTask();
-            }
-            catch (InvalidOperationException)
-            {
-                return Results.BadRequest().AsTask();
-            }
-        }
+            );
 
         public static Task<IR> DeleteSecret(string clientId, string type, string value, IEnumerable<Client> clients)
         {

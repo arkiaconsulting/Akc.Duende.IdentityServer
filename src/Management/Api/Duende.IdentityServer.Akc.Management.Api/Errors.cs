@@ -6,5 +6,6 @@ namespace Duende.IdentityServer.Akc.Management.Api
     {
         public const string ClientNotFound = "Client not found";
         public const string ClientSecretAlreadyExist = "Client secret already exists";
+        public const string ClientSecretNotFound = "Client secret not found";
     }
 }
