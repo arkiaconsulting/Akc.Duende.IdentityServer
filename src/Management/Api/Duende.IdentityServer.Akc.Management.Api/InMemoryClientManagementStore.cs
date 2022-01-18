@@ -57,6 +57,16 @@ namespace Duende.IdentityServer.Akc.Management.Api
             Get(clientId)
             .Bind(client => _CreateSecret(client.ClientSecrets, secret));
 
+        public Task<Result> UpdateSecret(string clientId, string type, string value, string newValue)
+        {
+            var client = Clients.Single(c => c.ClientId == clientId);
+            var secret = client.ClientSecrets.Single(s => s.Type == type && s.Value == value);
+
+            secret.Value = newValue;
+
+            return Result.Success().AsTask();
+        }
+
         #region Private
 
         private Result<Secret> _GetSecret(IEnumerable<Secret> secrets, string type, string value)
@@ -65,7 +75,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
 
             return exist
                 ? Result.Success(secret!)
-                : Result.Failure<Secret>("Secret not found");
+                : Result.Failure<Secret>(Errors.ClientSecretNotFound);
         }
 
         private Result _CreateSecret(IEnumerable<Secret> secrets, Secret secret) =>
