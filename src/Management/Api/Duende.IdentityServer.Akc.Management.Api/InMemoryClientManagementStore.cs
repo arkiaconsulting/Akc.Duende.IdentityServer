@@ -19,7 +19,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
         {
             var client = Clients.SingleOrDefault(c => c.ClientId == clientId);
 
-            return (client ?? Result.Failure<Client>($"No client found with Id '{clientId}'")).AsTask();
+            return (client ?? Result.Failure<Client>(Errors.ClientNotFound)).AsTask();
         }
 
         public Task<Result> Create(Client client)
@@ -48,5 +48,32 @@ namespace Duende.IdentityServer.Akc.Management.Api
 
             return Result.Success().AsTask();
         }
+
+        public Task<Result<Secret>> GetSecret(string clientId, string type, string value) =>
+            Get(clientId)
+            .Bind(client => _GetSecret(client.ClientSecrets, type, value));
+
+        public Task<Result> CreateSecret(string clientId, Secret secret) =>
+            Get(clientId)
+            .Bind(client => _CreateSecret(client.ClientSecrets, secret));
+
+        #region Private
+
+        private Result<Secret> _GetSecret(IEnumerable<Secret> secrets, string type, string value)
+        {
+            var exist = ToHashSet(secrets).TryGetValue(new(value, default) { Type = type }, out var secret);
+
+            return exist
+                ? Result.Success(secret!)
+                : Result.Failure<Secret>("Secret not found");
+        }
+
+        private Result _CreateSecret(IEnumerable<Secret> secrets, Secret secret) =>
+            ToHashSet(secrets).Add(secret) ? Result.Success() : Result.Failure("Cannot add secret");
+
+        private HashSet<Secret> ToHashSet(IEnumerable<Secret> secrets) =>
+            (secrets as HashSet<Secret>) ?? throw new InvalidOperationException("The secrets should be backed by a HashSet");
+
+        #endregion
     }
 }
