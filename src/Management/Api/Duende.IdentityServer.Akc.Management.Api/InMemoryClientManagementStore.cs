@@ -67,6 +67,16 @@ namespace Duende.IdentityServer.Akc.Management.Api
             return Result.Success().AsTask();
         }
 
+        public Task<Result> DeleteSecret(string clientId, string type, string value)
+        {
+            var client = Clients.Single(c => c.ClientId == clientId);
+            var secret = client.ClientSecrets.Single(s => s.Type == type && s.Value == value);
+
+            client.ClientSecrets.Remove(secret);
+
+            return Result.Success().AsTask();
+        }
+
         #region Private
 
         private Result<Secret> _GetSecret(IEnumerable<Secret> secrets, string type, string value)
