@@ -30,7 +30,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             store.Create(client.ToModel(clientId))
             .Match(
                 onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(clientId, options.Value), default),
-                onFailure: e => throw new NotImplementedException()
+                onFailure: e => Results.StatusCode((int)HttpStatusCode.InternalServerError)
             );
 
         public static Task<IR> Delete(string clientId, [FromServices] IClientManagementStore store) =>
@@ -72,41 +72,28 @@ namespace Duende.IdentityServer.Akc.Management.Api
                 {
                     Errors.ClientSecretNotFound => Results.NotFound(),
                     Errors.ClientNotFound => Results.BadRequest(),
-                    _ => Results.BadRequest()
+                    _ => Results.StatusCode((int)HttpStatusCode.InternalServerError)
                 }
             );
 
-        public static Task<IR> DeleteSecret(string clientId, string type, string value, IEnumerable<Client> clients)
-        {
-            var store = EnsureCollection(clients);
-
-            try
-            {
-                var client = store.Single(c => c.ClientId == clientId);
-                if (!(client.ClientSecrets as HashSet<Secret>)!.TryGetValue(new Secret(value) { Type = type }, out var existingSecret))
+        public static Task<IR> DeleteSecret(string clientId, string type, string value, [FromServices] IClientManagementStore store) =>
+            store.Get(clientId)
+            .Bind(client => store.GetSecret(client.ClientId, type, value))
+            .Tap(() => store.DeleteSecret(clientId, type, value))
+            .Match(
+                onSuccess: _ => Results.Ok(),
+                onFailure: e => e switch
                 {
-                    return Results.NotFound().AsTask();
+                    Errors.ClientNotFound => Results.BadRequest(),
+                    Errors.ClientSecretNotFound => Results.NotFound(),
+                    _ => Results.StatusCode((int)HttpStatusCode.InternalServerError)
                 }
-
-            (client.ClientSecrets as HashSet<Secret>)!.Remove(existingSecret);
-
-                return Results.Ok().AsTask();
-            }
-            catch (InvalidOperationException)
-            {
-                return Results.BadRequest().AsTask();
-            }
-        }
+            );
 
         #region Private
 
         private static Task<Result> EnsureClientSecretDoesNotExist(IClientManagementStore store, string clientId, string type, string value) =>
             store.GetSecret(clientId, type, value).Bind(_ => Result.Failure(Errors.ClientSecretAlreadyExist));
-
-        private static ICollection<Client> EnsureCollection(IEnumerable<Client> clients) =>
-            clients is not ICollection<Client> clientStore
-            ? throw new InvalidOperationException()
-            : clientStore;
 
         #endregion
     }
