@@ -1,4 +1,4 @@
-name: NuGet Duende.IdentityServer.Akc.Management.Api
+name: NuGet Akc.Duende.IdentityServer.Management.Api
 
 on:
   pull_request:
@@ -32,11 +32,11 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Add coverlet package
-        working-directory: ./src/Management/Api/Duende.IdentityServer.Akc.Management.Api.Tests/
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api.Tests/
         run: dotnet add package coverlet.collector --no-restore
 
       - name: Test
-        working-directory: ./src/Management/Api/Duende.IdentityServer.Akc.Management.Api.Tests/
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api.Tests/
         run: |
           dotnet test --configuration Release \
             /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }} \
@@ -47,13 +47,13 @@ jobs:
             --logger trx
 
       - name: Copy Coverage To Predictable Location
-        working-directory: ./src/Management/Api/Duende.IdentityServer.Akc.Management.Api.Tests/
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api.Tests/
         run: cp coverage/**/coverage.cobertura.xml coverage/coverage.cobertura.xml
 
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.0.5
         with:
-          filename: ./src/Management/Api/Duende.IdentityServer.Akc.Management.Api.Tests/coverage/coverage.cobertura.xml
+          filename: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api.Tests/coverage/coverage.cobertura.xml
           badge: true
           format: 'markdown'
           output: 'both'
@@ -66,7 +66,7 @@ jobs:
           path: code-coverage-results.md
         
       - name: Push
-        working-directory: ./src/Management/Api/Duende.IdentityServer.Akc.Management.Api/
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api/
         run: |
           dotnet pack --no-restore --output ./.nupkg --configuration Release \
             /p:PackageVersion=${{ steps.gitversion.outputs.NuGetVersion }}
