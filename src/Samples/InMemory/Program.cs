@@ -17,6 +17,8 @@ builder.Services.AddIdentityServer()
     .AddInMemoryApiScopes(SampleConstants.ApiScopes)
     .AddInMemoryClients(SampleConstants.Clients);
 
+builder.Services.AddInMemoryClientManagementApi();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
