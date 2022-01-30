@@ -12,12 +12,8 @@ namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal static class ClientMiddleware
     {
-        public static Task<IEnumerable<ClientOutputDto>> GetAll(IEnumerable<Client> clients)
-        {
-            var dto = clients.Select(DtoExtensions.FromModel);
-
-            return dto.AsTask();
-        }
+        public static Task<IEnumerable<ClientOutputDto>> GetAll(IEnumerable<Client> clients) =>
+            clients.Select(DtoExtensions.FromModel).AsTask();
 
         public static Task<IR> Get(string clientId, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
