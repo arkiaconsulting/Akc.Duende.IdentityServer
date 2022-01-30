@@ -1,6 +1,6 @@
 // This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
-using Duende.IdentityServer.Akc.Management.Api;
+using Akc.Duende.IdentityServer.Management.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
