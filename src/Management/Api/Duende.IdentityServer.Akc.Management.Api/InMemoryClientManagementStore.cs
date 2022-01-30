@@ -7,91 +7,69 @@ namespace Duende.IdentityServer.Akc.Management.Api
 {
     internal class InMemoryClientManagementStore : IClientManagementStore
     {
-        private ICollection<Client> Clients => _clients
-            ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");
-
-        private readonly ICollection<Client>? _clients;
+        private readonly ICollection<Client> _clients;
 
         public InMemoryClientManagementStore(IEnumerable<Client> clients) =>
-            _clients = clients as ICollection<Client>;
+            _clients = clients as ICollection<Client> ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");
 
-        public Task<Result<Client>> Get(string clientId)
-        {
-            var client = Clients.SingleOrDefault(c => c.ClientId == clientId);
+        public Task<Result<Client>> Get(string clientId) =>
+            TryFindClient(_clients, clientId);
 
-            return (client ?? Result.Failure<Client>(Errors.ClientNotFound)).AsTask();
-        }
+        public Task<Result> Create(Client client) =>
+            Result.Success(_clients)
+            .Tap(clients => clients.Add(client))
+            .ForgetValue();
 
-        public Task<Result> Create(Client client)
-        {
-            Clients.Add(client);
+        public Task<Result> Delete(string clientId) =>
+            TryFindClient(_clients, clientId)
+            .Tap(client => _clients.Remove(client))
+            .ForgetValue();
 
-            return Result.Success().AsTask();
-        }
-
-        public Task<Result> Delete(string clientId)
-        {
-            var client = Clients.Single(c => c.ClientId == clientId);
-
-            Clients.Remove(client);
-
-            return Result.Success().AsTask();
-        }
-
-        public Task<Result> Update(string clientId, Client client)
-        {
-            var existingClient = Clients.Single(c => c.ClientId == clientId);
-
-            Clients.Remove(existingClient);
-
-            Clients.Add(client);
-
-            return Result.Success().AsTask();
-        }
+        public Task<Result> Update(string clientId, Client client) =>
+            TryFindClient(_clients, clientId)
+            .Tap(existingClient => { _clients.Remove(existingClient); _clients.Add(client); })
+            .ForgetValue();
 
         public Task<Result<Secret>> GetSecret(string clientId, string type, string value) =>
-            Get(clientId)
-            .Bind(client => _GetSecret(client.ClientSecrets, type, value));
+            TryFindClient(_clients, clientId)
+            .Bind(client => TryFindSecret(client.ClientSecrets, type, value));
 
         public Task<Result> CreateSecret(string clientId, Secret secret) =>
-            Get(clientId)
-            .Bind(client => _CreateSecret(client.ClientSecrets, secret));
+            TryFindClient(_clients, clientId)
+            .Bind(client =>
+                ToHashSet(client.ClientSecrets).Add(secret)
+                ? Result.Success()
+                : Result.Failure(Errors.ClientSecretAlreadyExist)
+            );
 
-        public Task<Result> UpdateSecret(string clientId, string type, string value, string newValue)
-        {
-            var client = Clients.Single(c => c.ClientId == clientId);
-            var secret = client.ClientSecrets.Single(s => s.Type == type && s.Value == value);
+        public Task<Result> UpdateSecret(string clientId, string type, string value, string newValue) =>
+            TryFindClient(_clients, clientId)
+            .Bind(client =>
+                TryFindSecret(client.ClientSecrets, type, value)
+                .Tap(secret => secret.Value = newValue)
+            ).ForgetValue();
 
-            secret.Value = newValue;
-
-            return Result.Success().AsTask();
-        }
-
-        public Task<Result> DeleteSecret(string clientId, string type, string value)
-        {
-            var client = Clients.Single(c => c.ClientId == clientId);
-            var secret = client.ClientSecrets.Single(s => s.Type == type && s.Value == value);
-
-            client.ClientSecrets.Remove(secret);
-
-            return Result.Success().AsTask();
-        }
+        public Task<Result> DeleteSecret(string clientId, string type, string value) =>
+            TryFindClient(_clients, clientId)
+            .Bind(client =>
+                TryFindSecret(client.ClientSecrets, type, value)
+                .Tap(secret => client.ClientSecrets.Remove(secret))
+            ).ForgetValue();
 
         #region Private
 
-        private Result<Secret> _GetSecret(IEnumerable<Secret> secrets, string type, string value)
-        {
-            var exist = ToHashSet(secrets).TryGetValue(new(value, default) { Type = type }, out var secret);
+        private static Task<Result<Client>> TryFindClient(ICollection<Client> clients, string clientId) =>
+            Result.Success(clients)
+            .Bind(clients =>
+                clients.TryFirst(client => client.ClientId == clientId)
+                .ToResult(Errors.ClientNotFound)
+            ).AsTask();
 
-            return exist
-                ? Result.Success(secret!)
-                : Result.Failure<Secret>(Errors.ClientSecretNotFound);
-        }
+        private static Result<Secret> TryFindSecret(IEnumerable<Secret> secrets, string type, string value) =>
+            secrets.TryFirst(s => s.Type == type && s.Value == value)
+            .ToResult(Errors.ClientSecretNotFound);
 
-        private Result _CreateSecret(IEnumerable<Secret> secrets, Secret secret) =>
-            ToHashSet(secrets).Add(secret) ? Result.Success() : Result.Failure("Cannot add secret");
-
-        private HashSet<Secret> ToHashSet(IEnumerable<Secret> secrets) =>
+        private static HashSet<Secret> ToHashSet(IEnumerable<Secret> secrets) =>
             (secrets as HashSet<Secret>) ?? throw new InvalidOperationException("The secrets should be backed by a HashSet");
 
         #endregion
