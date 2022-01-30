@@ -2,7 +2,7 @@
 
 using CSharpFunctionalExtensions;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal static class TaskExtensions
     {
