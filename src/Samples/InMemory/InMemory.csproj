@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Duende.IdentityServer" Version="6.0.0" />
-    <PackageReference Include="Duende.IdentityServer.Akc.Management.Api" Version="0.1.9-pullrequest0004-0002" />
+    <PackageReference Include="Duende.IdentityServer.Akc.Management.Api" Version="0.1.18-pullrequest0010-0007" />
   </ItemGroup>
 
 </Project>
