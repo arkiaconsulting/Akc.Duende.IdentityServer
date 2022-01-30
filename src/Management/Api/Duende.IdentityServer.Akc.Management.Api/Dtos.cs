@@ -2,7 +2,7 @@
 
 using Duende.IdentityServer.Models;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     public record ClientInputDto(
         string ClientName,

@@ -1,7 +1,7 @@
 // This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
+using Akc.Duende.IdentityServer.Management.Api.Tests.Assets;
 using AutoFixture.Xunit2;
-using Duende.IdentityServer.Akc.Management.Api.Tests.Assets;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,7 +11,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Duende.IdentityServer.Akc.Management.Api.Tests
+namespace Akc.Duende.IdentityServer.Management.Api.Tests
 {
     [Trait("Category", "Integration")]
     public class ClientManagementPipelineTests

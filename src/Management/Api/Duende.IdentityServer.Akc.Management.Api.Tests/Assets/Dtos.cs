@@ -4,7 +4,7 @@ using Duende.IdentityServer.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Duende.IdentityServer.Akc.Management.Api.Tests.Assets
+namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 {
     public record ClientDto(
         string ClientId,

@@ -1,8 +1,8 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
-using Duende.IdentityServer.Akc.Management.Api;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     public static class ConfigurationExtensions
     {

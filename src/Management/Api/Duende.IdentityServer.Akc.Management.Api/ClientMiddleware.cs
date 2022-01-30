@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using IR = Microsoft.AspNetCore.Http.IResult;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal static class ClientMiddleware
     {

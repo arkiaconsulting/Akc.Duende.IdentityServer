@@ -3,7 +3,7 @@
 using CSharpFunctionalExtensions;
 using Duende.IdentityServer.Models;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal class InMemoryClientManagementStore : IClientManagementStore
     {
@@ -70,7 +70,7 @@ namespace Duende.IdentityServer.Akc.Management.Api
             .ToResult(Errors.ClientSecretNotFound);
 
         private static HashSet<Secret> ToHashSet(IEnumerable<Secret> secrets) =>
-            (secrets as HashSet<Secret>) ?? throw new InvalidOperationException("The secrets should be backed by a HashSet");
+            secrets as HashSet<Secret> ?? throw new InvalidOperationException("The secrets should be backed by a HashSet");
 
         #endregion
     }

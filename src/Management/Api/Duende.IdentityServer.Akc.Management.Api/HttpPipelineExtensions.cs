@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     public static class HttpPipelineExtensions
     {

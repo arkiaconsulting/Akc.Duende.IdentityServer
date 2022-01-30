@@ -5,8 +5,8 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<GenerateProgramFile>false</GenerateProgramFile>
-		<RootNamespace>Duende.IdentityServer.Akc.Management.Api.Tests</RootNamespace>
-		<AssemblyName>Duende.IdentityServer.Akc.Management.Api.Tests</AssemblyName>
+		<RootNamespace>Akc.Duende.IdentityServer.Management.Api.Tests</RootNamespace>
+		<AssemblyName>Akc.Duende.IdentityServer.Management.Api.Tests</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Duende.IdentityServer.Akc.Management.Api\Duende.IdentityServer.Akc.Management.Api.csproj" />
+	  <ProjectReference Include="..\Duende.IdentityServer.Akc.Management.Api\Akc.Duende.IdentityServer.Management.Api.csproj" />
 	</ItemGroup>
 
 </Project>

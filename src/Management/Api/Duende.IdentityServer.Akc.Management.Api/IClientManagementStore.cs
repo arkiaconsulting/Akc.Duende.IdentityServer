@@ -3,7 +3,7 @@
 using CSharpFunctionalExtensions;
 using Duende.IdentityServer.Models;
 
-namespace Duende.IdentityServer.Akc.Management.Api
+namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal interface IClientManagementStore
     {
