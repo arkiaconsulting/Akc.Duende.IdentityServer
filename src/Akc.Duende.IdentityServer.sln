@@ -11,11 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InMemory", "Samples\InMemor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{77C077A7-D2FB-4F94-89D1-54C1FABBF239}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akc.Duende.IdentityServer.Management.Api", "Management\Api\Duende.IdentityServer.Akc.Management.Api\Akc.Duende.IdentityServer.Management.Api.csproj", "{DA7208C4-8941-4151-B806-206C295A660F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akc.Duende.IdentityServer.Management.Api", "Management\Api\Akc.Duende.IdentityServer.Management.Api\Akc.Duende.IdentityServer.Management.Api.csproj", "{DA7208C4-8941-4151-B806-206C295A660F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AC75BEFC-EF1B-4BAF-8AF8-37917B0A3532}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akc.Duende.IdentityServer.Management.Api.Tests", "Management\Api\Duende.IdentityServer.Akc.Management.Api.Tests\Akc.Duende.IdentityServer.Management.Api.Tests.csproj", "{1CB32337-4318-47D5-9516-233C7B129F23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akc.Duende.IdentityServer.Management.Api.Tests", "Management\Api\Akc.Duende.IdentityServer.Management.Api.Tests\Akc.Duende.IdentityServer.Management.Api.Tests.csproj", "{1CB32337-4318-47D5-9516-233C7B129F23}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F089893F-6181-4D46-BD04-1625C6815E4A}"
 	ProjectSection(SolutionItems) = preProject
