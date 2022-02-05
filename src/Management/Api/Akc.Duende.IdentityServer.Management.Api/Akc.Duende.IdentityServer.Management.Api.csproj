@@ -12,8 +12,8 @@
 			This client library enables working with Duende IdentityServer for managing resources
 			using REST Api.
 		</Description>
-		<RepositoryUrl>https://github.com/arkiaconsulting/Duende.IdentityServer.Akc</RepositoryUrl>
-		<RepositoryType>https://github.com/arkiaconsulting/Duende.IdentityServer.Akc</RepositoryType>
+		<RepositoryUrl>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</RepositoryUrl>
+		<RepositoryType>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIconUrl />
 		<PackageIcon>icon.png</PackageIcon>

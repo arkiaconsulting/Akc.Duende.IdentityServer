@@ -1,5 +1,6 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
+using Duende.IdentityServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
@@ -31,13 +32,20 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
                 .AddInMemoryClients(testData.Clients)
                 .AddInMemoryIdentityResources(testData.IdentityResources);
 
+            builder.Services.AddLocalApiAuthentication();
+
+            builder.Services.AddIdentityServerLocalJwtBearerByPass(); // for tests purpose
+
             builder.Services.AddSingleton(testData);
 
             var app = builder.Build();
 
             app.UseIdentityServer();
+            app.UseAuthorization();
 
-            app.UseIdentityServerClientApi();
+            app
+            .UseIdentityServerClientApi()
+            .RequireAuthorization(IdentityServerConstants.LocalApi.PolicyName);
 
             app.Run();
         }

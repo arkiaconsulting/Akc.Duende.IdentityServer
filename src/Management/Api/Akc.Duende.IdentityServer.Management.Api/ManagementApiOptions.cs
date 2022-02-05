@@ -7,5 +7,6 @@ namespace Akc.Duende.IdentityServer.Management.Api
     public class ManagementApiOptions
     {
         public PathString BasePath { get; set; } = Constants.Paths.Clients;
+        public string AuthorizationPolicy { get; set; } = "IdentityServerAccessToken";
     }
 }
