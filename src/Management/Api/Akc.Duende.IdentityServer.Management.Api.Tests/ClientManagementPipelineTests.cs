@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -29,7 +28,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Fact(DisplayName = "Return stored clients")]
         [Trait("Category", "CLIENT")]
         public async Task Test01() =>
-            (await GetClients()).Should().BeEquivalentTo(
+            (await Client.GetClients()).Should().BeEquivalentTo(
                 TestData.Clients,
                 opts => opts.Excluding(c => c.ClientSecrets));
 
@@ -38,9 +37,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test02(ClientCreateDto client, string clientId)
         {
-            using var _ = await CreateClient(clientId, client);
+            using var _ = await Client.CreateClient(clientId, client);
 
-            (await GetClients()).Should().ContainEquivalentOf(client).Subject
+            (await Client.GetClients()).Should().ContainEquivalentOf(client).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
@@ -49,11 +48,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test03(ClientCreateDto existingClient, ClientUpdateDto updatedClient, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
+            _ = await Client.CreateClient(clientId, existingClient);
 
-            using var _1 = await UpdateClient(clientId, updatedClient);
+            using var _1 = await Client.UpdateClient(clientId, updatedClient);
 
-            (await GetClients()).Should().ContainEquivalentOf(updatedClient).Subject
+            (await Client.GetClients()).Should().ContainEquivalentOf(updatedClient).Subject
                 .ClientId.Should().Be(clientId.ToString());
         }
 
@@ -62,7 +61,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test031(ClientUpdateDto updatedClient, string clientId)
         {
-            using var response = await UpdateClient(clientId, updatedClient);
+            using var response = await Client.UpdateClient(clientId, updatedClient);
 
             response.Should().Be404NotFound();
         }
@@ -72,11 +71,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test04(ClientCreateDto existingClient, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
+            _ = await Client.CreateClient(clientId, existingClient);
 
-            using var _1 = await DeleteClient(clientId);
+            using var _1 = await Client.DeleteClient(clientId);
 
-            (await GetClients()).Should().NotContainEquivalentOf(existingClient);
+            (await Client.GetClients()).Should().NotContainEquivalentOf(existingClient);
         }
 
         [Theory(DisplayName = "Delete an existing client that does not exist")]
@@ -84,7 +83,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test041(string clientId)
         {
-            using var response = await DeleteClient(clientId);
+            using var response = await Client.DeleteClient(clientId);
 
             response.Should().Be404NotFound();
         }
@@ -94,9 +93,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test05(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
+            _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await CreateClientSecret(clientId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, newClientSecret);
 
             response.Should().Be201Created();
         }
@@ -106,7 +105,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test051(string clientId, CreateClientSecretDto newClientSecret)
         {
-            using var response = await CreateClientSecret(clientId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, newClientSecret);
 
             response.Should().Be400BadRequest();
         }
@@ -116,10 +115,10 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test052(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
-            _ = await CreateClientSecret(clientId, newClientSecret);
+            _ = await Client.CreateClient(clientId, existingClient);
+            _ = await Client.CreateClientSecret(clientId, newClientSecret);
 
-            using var response = await CreateClientSecret(clientId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, newClientSecret);
 
             response.Should().Be200Ok();
         }
@@ -130,13 +129,13 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         public async Task Test053(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, string newSecret, string description, DateTime newExpiry)
         {
             var updateSecretDto = new UpdateClientSecretDto(initialClientSecret.Id, newSecret, description, newExpiry);
-            _ = await CreateClient(clientId, existingClient);
-            _ = await CreateClientSecret(clientId, initialClientSecret);
+            _ = await Client.CreateClient(clientId, existingClient);
+            _ = await Client.CreateClientSecret(clientId, initialClientSecret);
 
-            using var response = await UpdateClientSecret(clientId, updateSecretDto);
+            using var response = await Client.UpdateClientSecret(clientId, updateSecretDto);
 
             response.Should().Be200Ok();
-            var actualClientSecret = await GetClientSecret(clientId, initialClientSecret.Id);
+            var actualClientSecret = await Client.GetClientSecret(clientId, initialClientSecret.Id);
             actualClientSecret.Should().NotBeNull().And
                 .BeEquivalentTo(new
                 {
@@ -153,7 +152,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test054(UpdateClientSecretDto clientSecretUpdate, string clientId)
         {
-            using var response = await UpdateClientSecret(clientId, clientSecretUpdate);
+            using var response = await Client.UpdateClientSecret(clientId, clientSecretUpdate);
 
             response.Should().Be400BadRequest();
         }
@@ -163,9 +162,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test055(ClientCreateDto existingClient, UpdateClientSecretDto clientSecretUpdate, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
+            _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await UpdateClientSecret(clientId, clientSecretUpdate);
+            using var response = await Client.UpdateClientSecret(clientId, clientSecretUpdate);
 
             response.Should().Be404NotFound();
         }
@@ -175,10 +174,10 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test056(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
-            _ = await CreateClientSecret(clientId, clientSecret);
+            _ = await Client.CreateClient(clientId, existingClient);
+            _ = await Client.CreateClientSecret(clientId, clientSecret);
 
-            using var response = await DeleteClientSecret(clientId, clientSecret.Id);
+            using var response = await Client.DeleteClientSecret(clientId, clientSecret.Id);
 
             response.Should().Be200Ok();
         }
@@ -188,9 +187,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test057(ClientCreateDto existingClient, string clientId, int secretId)
         {
-            _ = await CreateClient(clientId, existingClient);
+            _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await DeleteClientSecret(clientId, secretId);
+            using var response = await Client.DeleteClientSecret(clientId, secretId);
 
             response.Should().Be404NotFound();
         }
@@ -200,7 +199,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test058(string clientId, int secretId)
         {
-            using var response = await DeleteClientSecret(clientId, secretId);
+            using var response = await Client.DeleteClientSecret(clientId, secretId);
 
             response.Should().Be400BadRequest();
         }
@@ -210,10 +209,10 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test059(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId)
         {
-            _ = await CreateClient(clientId, existingClient);
-            _ = await CreateClientSecret(clientId, clientSecret);
+            _ = await Client.CreateClient(clientId, existingClient);
+            _ = await Client.CreateClientSecret(clientId, clientSecret);
 
-            var actualClientSecret = await GetClientSecret(clientId, clientSecret.Id);
+            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecret.Id);
 
             actualClientSecret.Should().NotBeNull().And
                 .BeEquivalentTo(new
@@ -230,9 +229,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test6(ClientCreateDto client, string clientId)
         {
-            using var _ = await CreateClient(clientId, client);
+            using var _ = await Client.CreateClient(clientId, client);
 
-            var actualClient = await GetClient(clientId);
+            var actualClient = await Client.GetClient(clientId);
 
             actualClient.Should().BeEquivalentTo(client);
             actualClient!.ClientId.Should().Be(clientId);
@@ -243,41 +242,10 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test61(string clientId)
         {
-            Func<Task> f = () => GetClient(clientId);
+            Func<Task> f = () => Client.GetClient(clientId);
 
             await f.Should().ThrowAsync<HttpRequestException>()
                 .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
         }
-
-        #region Private
-
-        private Task<HttpResponseMessage> CreateClient(string clientId, ClientCreateDto dto) =>
-            Client.PutAsJsonAsync($"{clientId}", dto);
-
-        private Task<ClientDto[]?> GetClients() =>
-            Client.GetFromJsonAsync<ClientDto[]>(string.Empty);
-
-        private Task<ClientDto?> GetClient(string clientId) =>
-            Client.GetFromJsonAsync<ClientDto>($"{clientId}");
-
-        private Task<HttpResponseMessage> UpdateClient(string clientId, ClientUpdateDto dto) =>
-            Client.PostAsJsonAsync($"{clientId}", dto);
-
-        private Task<HttpResponseMessage> DeleteClient(string clientId) =>
-            Client.DeleteAsync($"{clientId}");
-
-        private Task<HttpResponseMessage> CreateClientSecret(string clientId, CreateClientSecretDto dto) =>
-            Client.PutAsJsonAsync($"{clientId}/secrets", dto);
-
-        private Task<HttpResponseMessage> UpdateClientSecret(string clientId, UpdateClientSecretDto dto) =>
-            Client.PostAsJsonAsync($"{clientId}/secrets", dto);
-
-        private Task<HttpResponseMessage> DeleteClientSecret(string clientId, int id) =>
-            Client.DeleteAsync($"{clientId}/secrets/{id}");
-
-        private Task<SecretDto?> GetClientSecret(string clientId, int id) =>
-            Client.GetFromJsonAsync<SecretDto>($"{clientId}/secrets/{id}");
-
-        #endregion
     }
 }
