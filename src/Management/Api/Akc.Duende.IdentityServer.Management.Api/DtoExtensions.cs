@@ -79,7 +79,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             );
 
         public static Secret ToModel(this CreateClientSecretInputDto dto) =>
-            new(dto.Value, dto.Expiration) { Type = dto.Type };
+            new(dto.Value, dto.Description, dto.Expiration) { Type = dto.Type };
 
         public static SecretDto ToDto(this Secret model, int id) =>
             new(id, model.Type, model.Value, model.Description, model.Expiration);
