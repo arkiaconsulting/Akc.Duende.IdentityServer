@@ -22,7 +22,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
                 app.MapPut($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.AddSecret),
                 app.MapPost($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
-                app.MapDelete($"{options.BasePath}/{{clientId}}/secrets/{{type}}/{{value}}", ClientMiddleware.DeleteSecret)
+                app.MapDelete($"{options.BasePath}/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret)
             };
 
             return new(app, builders);

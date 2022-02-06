@@ -1,7 +1,6 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
 using CSharpFunctionalExtensions;
-using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -12,8 +11,13 @@ namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal static class ClientMiddleware
     {
-        public static Task<IEnumerable<ClientOutputDto>> GetAll(IEnumerable<Client> clients) =>
-            clients.Select(DtoExtensions.FromModel).AsTask();
+        public static Task<IR> GetAll([FromServices] IClientManagementStore store) =>
+            store.GetAll()
+            .Map(clients => clients.Select(DtoExtensions.FromModel))
+            .Match(
+                onSuccess: clients => Results.Ok(clients),
+                onFailure: e => Results.BadRequest()
+            );
 
         public static Task<IR> Get(string clientId, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
@@ -47,21 +51,22 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
         public static Task<IR> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => EnsureClientSecretDoesNotExist(store, client.ClientId, clientSecret.Type, clientSecret.Value))
-            .OnFailureCompensate(() => store.CreateSecret(clientId, clientSecret.ToModel()))
+            .Ensure(client => store.GetSecret(client.ClientId, clientSecret.Id).Match(_ => false, _ => true), Errors.ClientSecretAlreadyExist)
+            .Bind(client => store.CreateSecret(clientId, clientSecret.ToModel(), clientSecret.Id))
             .Match(
                 onSuccess: () => Results.StatusCode((int)HttpStatusCode.Created),
                 onFailure: e => e switch
                 {
                     Errors.ClientNotFound => Results.BadRequest(),
-                    _ => Results.Ok()
+                    Errors.ClientSecretAlreadyExist => Results.Ok(),
+                    _ => Results.StatusCode((int)HttpStatusCode.InternalServerError)
                 }
             );
 
         public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, clientSecret.Type, clientSecret.Value))
-            .Tap(() => store.UpdateSecret(clientId, clientSecret.Type, clientSecret.Value, clientSecret.NewValue))
+            .Bind(client => store.GetSecret(client.ClientId, clientSecret.Id))
+            .Tap(() => store.UpdateSecret(clientId, clientSecret.Id, clientSecret.NewValue))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch
@@ -72,10 +77,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 }
             );
 
-        public static Task<IR> DeleteSecret(string clientId, string type, string value, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> DeleteSecret(string clientId, int id, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, type, value))
-            .Tap(() => store.DeleteSecret(clientId, type, value))
+            .Bind(client => store.GetSecret(client.ClientId, id))
+            .Tap(() => store.DeleteSecret(clientId, id))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch
@@ -85,12 +90,5 @@ namespace Akc.Duende.IdentityServer.Management.Api
                     _ => Results.StatusCode((int)HttpStatusCode.InternalServerError)
                 }
             );
-
-        #region Private
-
-        private static Task<Result> EnsureClientSecretDoesNotExist(IClientManagementStore store, string clientId, string type, string value) =>
-            store.GetSecret(clientId, type, value).Bind(_ => Result.Failure(Errors.ClientSecretAlreadyExist));
-
-        #endregion
     }
 }

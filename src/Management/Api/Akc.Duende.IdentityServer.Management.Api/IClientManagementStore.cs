@@ -8,12 +8,13 @@ namespace Akc.Duende.IdentityServer.Management.Api
     internal interface IClientManagementStore
     {
         Task<Result<Client>> Get(string clientId);
+        Task<Result<IEnumerable<Client>>> GetAll();
         Task<Result> Create(Client client);
         Task<Result> Delete(string clientId);
         Task<Result> Update(string clientId, Client client);
-        Task<Result<Secret>> GetSecret(string clientId, string type, string value);
-        Task<Result> CreateSecret(string clientId, Secret secret);
-        Task<Result> UpdateSecret(string clientId, string type, string value, string newValue);
-        Task<Result> DeleteSecret(string clientId, string type, string value);
+        Task<Result<Secret>> GetSecret(string clientId, int id);
+        Task<Result> CreateSecret(string clientId, Secret secret, int id);
+        Task<Result> UpdateSecret(string clientId, int id, string newValue);
+        Task<Result> DeleteSecret(string clientId, int id);
     }
 }
