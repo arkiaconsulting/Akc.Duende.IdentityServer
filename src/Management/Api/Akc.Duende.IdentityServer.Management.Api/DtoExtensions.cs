@@ -1,6 +1,7 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
 using Duende.IdentityServer.Models;
+using IdentityModel;
 
 namespace Akc.Duende.IdentityServer.Management.Api
 {
@@ -79,7 +80,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             );
 
         public static Secret ToModel(this CreateClientSecretInputDto dto) =>
-            new(dto.Value, dto.Description, dto.Expiration) { Type = dto.Type };
+            new(dto.Value.ToSha256(), dto.Description, dto.Expiration) { Type = dto.Type };
 
         public static SecretDto ToDto(this Secret model, int id) =>
             new(id, model.Type, model.Value, model.Description, model.Expiration);

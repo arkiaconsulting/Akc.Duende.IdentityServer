@@ -2,6 +2,7 @@
 
 using Akc.Duende.IdentityServer.Management.Api.Tests.Assets;
 using AutoFixture.Xunit2;
+using Duende.IdentityServer.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -104,7 +105,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 {
                     newClientSecret.Id,
                     newClientSecret.Type,
-                    newClientSecret.Value,
+                    Value = newClientSecret.Value.Sha256(),
                     newClientSecret.Description,
                     newClientSecret.Expiration
                 });
@@ -229,7 +230,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 {
                     clientSecret.Id,
                     clientSecret.Type,
-                    clientSecret.Value,
+                    Value = clientSecret.Value.Sha256(),
                     clientSecret.Expiration
                 });
         }
