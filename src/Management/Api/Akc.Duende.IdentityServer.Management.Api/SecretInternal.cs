@@ -4,26 +4,18 @@ using Duende.IdentityServer.Models;
 
 namespace Akc.Duende.IdentityServer.Management.Api
 {
-    internal class SecretInternal
+    internal class SecretInternal : Secret
     {
         public int Id { get; }
-        public string ClientId { get; }
-        public string? Description { get; }
-        public string Type { get; }
-        public string Value { get; }
-        public DateTime? Expiration { get; }
 
-        public SecretInternal(int id, string clientId, string type, string value, string description, DateTime? expiration)
+        public SecretInternal(int id, string type, string value, string description, DateTime? expiration)
+            : base(value, description, expiration)
         {
             Id = id;
-            ClientId = clientId;
             Type = type;
-            Value = value;
-            Description = description;
-            Expiration = expiration;
         }
 
-        public static SecretInternal FromModel(string clientId, Secret secret, int index) =>
-            new(index, clientId, secret.Type, secret.Value, secret.Description, secret.Expiration);
+        public static SecretInternal FromModel(Secret secret, int index) =>
+            new(index, secret.Type, secret.Value, secret.Description, secret.Expiration);
     }
 }

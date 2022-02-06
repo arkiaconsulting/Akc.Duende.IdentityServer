@@ -8,14 +8,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
     internal class InMemoryClientManagementStore : IClientManagementStore
     {
         private readonly ICollection<Client> _inMemoryClients;
-        private readonly IDictionary<string, ICollection<SecretInternal>> _secrets;
-        public InMemoryClientManagementStore(IEnumerable<Client> clients)
-        {
-            _inMemoryClients = (clients as ICollection<Client>) ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");
-            _secrets = clients.ToDictionary(
-                c => c.ClientId,
-                c => (ICollection<SecretInternal>)c.ClientSecrets.Select((s, i) => SecretInternal.FromModel(c.ClientId, s, i)).ToList());
-        }
+        public InMemoryClientManagementStore(IEnumerable<Client> clients) => _inMemoryClients = (clients as ICollection<Client>) ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");//_secrets = clients.ToDictionary(//    c => c.ClientId,//    c => (ICollection<SecretInternal>)c.ClientSecrets.Select((s, i) => SecretInternal.FromModel(c.ClientId, s, i)).ToList());
 
         public Task<Result<IEnumerable<Client>>> GetAll() =>
             Result.Success(_inMemoryClients.AsEnumerable())
@@ -26,7 +19,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
         public Task<Result> Create(Client client) =>
             Result.Success(_inMemoryClients)
-            .Tap(clients => { clients.Add(client); _secrets.Add(client.ClientId, new List<SecretInternal>()); })
+            .Tap(clients => { clients.Add(client); })
             .ForgetValue();
 
         public Task<Result> Delete(string clientId) =>
@@ -41,25 +34,27 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
         public Task<Result<Secret>> GetSecret(string clientId, int id) =>
             TryFindClient(_inMemoryClients, clientId)
-            .Bind(client => TryFindSecret(_secrets[client.ClientId], id))
+            .Bind(client => TryFindSecret(client, id))
             .Map(secret => new Secret(secret.Value, secret.Description, secret.Expiration) { Type = secret.Type });
 
         public Task<Result> CreateSecret(string clientId, Secret secret, int id) =>
             TryFindClient(_inMemoryClients, clientId)
-            .Tap(client => _secrets[client.ClientId].Add(SecretInternal.FromModel(client.ClientId, secret, id)))
+            .Tap(client => client.ClientSecrets.Add(SecretInternal.FromModel(secret, id)))
             .ForgetValue();
 
         public Task<Result> UpdateSecret(string clientId, int id, string newValue, string description, DateTime? expiration) =>
             TryFindClient(_inMemoryClients, clientId)
-            .Bind(client => TryFindSecret(_secrets[client.ClientId], id))
-            .Tap(secret => { _secrets[clientId].Remove(secret); _secrets[clientId].Add(new SecretInternal(id, secret.ClientId, secret.Type, newValue, description, expiration)); })
+            .Bind(client =>
+                TryFindSecret(client, id)
+                .Tap(secret => { client.ClientSecrets.Remove(secret); client.ClientSecrets.Add(new SecretInternal(id, secret.Type, newValue, description, expiration)); })
+            )
             .ForgetValue();
 
         public Task<Result> DeleteSecret(string clientId, int id) =>
             TryFindClient(_inMemoryClients, clientId)
             .Bind(client =>
-                TryFindSecret(_secrets[client.ClientId], id)
-                .Tap(secret => _secrets[client.ClientId].Remove(secret))
+                TryFindSecret(client, id)
+                .Tap(secret => client.ClientSecrets.Remove(secret))
             ).ForgetValue();
 
         #region Private
@@ -71,8 +66,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 .ToResult(Errors.ClientNotFound)
             ).AsTask();
 
-        private static Result<SecretInternal> TryFindSecret(IEnumerable<SecretInternal> secrets, int id) =>
-            secrets.TryFirst(s => s.Id == id)
+        private static Result<SecretInternal> TryFindSecret(Client client, int id) =>
+            client.ClientSecrets.OfType<SecretInternal>().TryFirst(s => s.Id == id)
             .ToResult(Errors.ClientSecretNotFound);
 
         #endregion
