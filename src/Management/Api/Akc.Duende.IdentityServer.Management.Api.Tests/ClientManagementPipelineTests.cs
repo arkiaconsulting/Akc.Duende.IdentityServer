@@ -98,6 +98,16 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
             using var response = await Client.CreateClientSecret(clientId, newClientSecret);
 
             response.Should().Be201Created();
+            var actualClientSecret = await Client.GetClientSecret(clientId, newClientSecret.Id);
+            actualClientSecret.Should().NotBeNull().And
+                .BeEquivalentTo(new
+                {
+                    newClientSecret.Id,
+                    newClientSecret.Type,
+                    newClientSecret.Value,
+                    newClientSecret.Description,
+                    newClientSecret.Expiration
+                });
         }
 
         [Theory(DisplayName = "Fail adding a client secret when the client does not exist")]
