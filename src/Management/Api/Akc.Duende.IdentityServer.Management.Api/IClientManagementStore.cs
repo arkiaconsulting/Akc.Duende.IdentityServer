@@ -14,7 +14,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
         Task<Result> Update(string clientId, Client client);
         Task<Result<Secret>> GetSecret(string clientId, int id);
         Task<Result> CreateSecret(string clientId, Secret secret, int id);
-        Task<Result> UpdateSecret(string clientId, int id, string newValue);
+        Task<Result> UpdateSecret(string clientId, int id, string newValue, DateTime? expiration);
         Task<Result> DeleteSecret(string clientId, int id);
     }
 }

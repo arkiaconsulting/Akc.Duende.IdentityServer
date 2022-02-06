@@ -20,6 +20,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 app.MapPost($"{options.BasePath}/{{clientId}}", ClientMiddleware.Update),
                 app.MapDelete($"{options.BasePath}/{{clientId}}", ClientMiddleware.Delete),
 
+                app.MapGet($"{options.BasePath}/{{clientId}}/secrets/{{id}}", ClientMiddleware.GetSecret),
                 app.MapPut($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.AddSecret),
                 app.MapPost($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
                 app.MapDelete($"{options.BasePath}/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret)

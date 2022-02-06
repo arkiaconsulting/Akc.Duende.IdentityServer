@@ -42,24 +42,25 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
         public Task<Result<Secret>> GetSecret(string clientId, int id) =>
             TryFindClient(_clients, clientId)
-            .Bind(client => TryFindSecret(_secrets[client.ClientId], id));
+            .Bind(client => TryFindSecret(_secrets[client.ClientId], id))
+            .Map(secret => new Secret(secret.Value, secret.Description, secret.Expiration) { Type = secret.Type });
 
         public Task<Result> CreateSecret(string clientId, Secret secret, int id) =>
             TryFindClient(_clients, clientId)
             .Tap(client => _secrets[client.ClientId].Add(SecretInternal.FromModel(client.ClientId, secret, id)))
             .ForgetValue();
 
-        public Task<Result> UpdateSecret(string clientId, int id, string newValue) =>
+        public Task<Result> UpdateSecret(string clientId, int id, string newValue, DateTime? expiration) =>
             TryFindClient(_clients, clientId)
             .Bind(client => TryFindSecret(_secrets[client.ClientId], id))
-            .Tap(secret => secret.Value = newValue)
+            .Tap(secret => { _secrets[clientId].Remove(secret); _secrets[clientId].Add(new SecretInternal(id, secret.ClientId, secret.Type, newValue, expiration, secret.Description ?? string.Empty)); })
             .ForgetValue();
 
         public Task<Result> DeleteSecret(string clientId, int id) =>
             TryFindClient(_clients, clientId)
             .Bind(client =>
                 TryFindSecret(_secrets[client.ClientId], id)
-                .Tap(secret => client.ClientSecrets.Remove(secret))
+                .Tap(secret => _secrets[client.ClientId].Remove(secret))
             ).ForgetValue();
 
         #region Private
@@ -71,9 +72,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 .ToResult(Errors.ClientNotFound)
             ).AsTask();
 
-        private static Result<Secret> TryFindSecret(IEnumerable<SecretInternal> secrets, int id) =>
+        private static Result<SecretInternal> TryFindSecret(IEnumerable<SecretInternal> secrets, int id) =>
             secrets.TryFirst(s => s.Id == id)
-            .Map(si => new Secret(si.Value, si.Description, si.Expiration) { Type = si.Type })
             .ToResult(Errors.ClientSecretNotFound);
 
         #endregion
