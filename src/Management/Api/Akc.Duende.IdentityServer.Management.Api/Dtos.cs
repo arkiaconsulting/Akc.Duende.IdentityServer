@@ -105,7 +105,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
         string[] AllowedCorsOrigins,
         IDictionary<string, string> Properties);
 
+    public record SecretDto(int Id, string Type, string Value, DateTime? Expiration);
     public record CreateClientSecretInputDto(int Id, string Type, string Value, DateTime? Expiration);
 
-    public record UpdateClientSecretInputDto(int Id, string Type, string NewValue, DateTime? Expiration);
+    public record UpdateClientSecretInputDto(int Id, string NewValue, DateTime? Expiration);
 }

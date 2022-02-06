@@ -17,7 +17,6 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
     public class ClientManagementPipelineTests
     {
         private HttpClient Client { get; }
-        private string AnySecretType { get; } = "AnySecretType";
         private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
         private readonly DefaultWebApplicationFactory _factory;
 
@@ -130,13 +129,22 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [InlineAutoData]
         public async Task Test053(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, string newSecret, DateTime newExpiry)
         {
-            var updateSecretDto = new UpdateClientSecretDto(initialClientSecret.Id, initialClientSecret.Type, newSecret, newExpiry);
+            var updateSecretDto = new UpdateClientSecretDto(initialClientSecret.Id, newSecret, newExpiry);
             _ = await CreateClient(clientId, existingClient);
             _ = await CreateClientSecret(clientId, initialClientSecret);
 
             using var response = await UpdateClientSecret(clientId, updateSecretDto);
 
             response.Should().Be200Ok();
+            var actualClientSecret = await GetClientSecret(clientId, initialClientSecret.Id);
+            actualClientSecret.Should().NotBeNull().And
+                .BeEquivalentTo(new
+                {
+                    initialClientSecret.Id,
+                    initialClientSecret.Type,
+                    Value = updateSecretDto.NewValue,
+                    updateSecretDto.Expiration
+                });
         }
 
         [Theory(DisplayName = "Fail when updating a client secret and the client does not exists")]
@@ -196,6 +204,26 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
             response.Should().Be400BadRequest();
         }
 
+        [Theory(DisplayName = "Pass when getting a client secret")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test059(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId)
+        {
+            _ = await CreateClient(clientId, existingClient);
+            _ = await CreateClientSecret(clientId, clientSecret);
+
+            var actualClientSecret = await GetClientSecret(clientId, clientSecret.Id);
+
+            actualClientSecret.Should().NotBeNull().And
+                .BeEquivalentTo(new
+                {
+                    clientSecret.Id,
+                    clientSecret.Type,
+                    clientSecret.Value,
+                    clientSecret.Expiration
+                });
+        }
+
         [Theory(DisplayName = "Pass when getting a client")]
         [Trait("Category", "CLIENT")]
         [InlineAutoData]
@@ -245,6 +273,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
 
         private Task<HttpResponseMessage> DeleteClientSecret(string clientId, int id) =>
             Client.DeleteAsync($"{clientId}/secrets/{id}");
+
+        private Task<SecretDto?> GetClientSecret(string clientId, int id) =>
+            Client.GetFromJsonAsync<SecretDto>($"{clientId}/secrets/{id}");
 
         #endregion
     }
