@@ -75,7 +75,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
         public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
             .Bind(client => store.GetSecret(client.ClientId, clientSecret.Id))
-            .Tap(() => store.UpdateSecret(clientId, clientSecret.Id, clientSecret.NewValue, clientSecret.Expiration))
+            .Tap(() => store.UpdateSecret(clientId, clientSecret.Id, clientSecret.NewValue, clientSecret.Description, clientSecret.Expiration))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch

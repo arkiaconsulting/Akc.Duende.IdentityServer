@@ -50,10 +50,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Tap(client => _secrets[client.ClientId].Add(SecretInternal.FromModel(client.ClientId, secret, id)))
             .ForgetValue();
 
-        public Task<Result> UpdateSecret(string clientId, int id, string newValue, DateTime? expiration) =>
+        public Task<Result> UpdateSecret(string clientId, int id, string newValue, string description, DateTime? expiration) =>
             TryFindClient(_clients, clientId)
             .Bind(client => TryFindSecret(_secrets[client.ClientId], id))
-            .Tap(secret => { _secrets[clientId].Remove(secret); _secrets[clientId].Add(new SecretInternal(id, secret.ClientId, secret.Type, newValue, expiration, secret.Description ?? string.Empty)); })
+            .Tap(secret => { _secrets[clientId].Remove(secret); _secrets[clientId].Add(new SecretInternal(id, secret.ClientId, secret.Type, newValue, description, expiration)); })
             .ForgetValue();
 
         public Task<Result> DeleteSecret(string clientId, int id) =>
