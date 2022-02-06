@@ -127,9 +127,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Pass when updating a client secret")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test053(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, string newSecret, DateTime newExpiry)
+        public async Task Test053(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, string newSecret, string description, DateTime newExpiry)
         {
-            var updateSecretDto = new UpdateClientSecretDto(initialClientSecret.Id, newSecret, newExpiry);
+            var updateSecretDto = new UpdateClientSecretDto(initialClientSecret.Id, newSecret, description, newExpiry);
             _ = await CreateClient(clientId, existingClient);
             _ = await CreateClientSecret(clientId, initialClientSecret);
 
@@ -143,6 +143,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                     initialClientSecret.Id,
                     initialClientSecret.Type,
                     Value = updateSecretDto.NewValue,
+                    updateSecretDto.Description,
                     updateSecretDto.Expiration
                 });
         }

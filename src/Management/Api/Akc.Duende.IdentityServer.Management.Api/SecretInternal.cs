@@ -13,17 +13,17 @@ namespace Akc.Duende.IdentityServer.Management.Api
         public string Value { get; }
         public DateTime? Expiration { get; }
 
-        public SecretInternal(int id, string clientId, string type, string value, DateTime? expiration, string description)
+        public SecretInternal(int id, string clientId, string type, string value, string description, DateTime? expiration)
         {
             Id = id;
             ClientId = clientId;
             Type = type;
             Value = value;
-            Expiration = expiration;
             Description = description;
+            Expiration = expiration;
         }
 
         public static SecretInternal FromModel(string clientId, Secret secret, int index) =>
-            new(index, clientId, secret.Type, secret.Value, secret.Expiration, secret.Description);
+            new(index, clientId, secret.Type, secret.Value, secret.Description, secret.Expiration);
     }
 }
