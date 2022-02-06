@@ -224,6 +224,19 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 });
         }
 
+        [Theory(DisplayName = "Fail when getting a client secret that does not exist")]
+        [Trait("Category", "CLIENT_SECRET")]
+        [InlineAutoData]
+        public async Task Test060(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId)
+        {
+            _ = await Client.CreateClient(clientId, existingClient);
+
+            Func<Task> f = () => Client.GetClientSecret(clientId, clientSecret.Id);
+
+            await f.Should().ThrowAsync<HttpRequestException>()
+                .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+        }
+
         [Theory(DisplayName = "Pass when getting a client")]
         [Trait("Category", "CLIENT")]
         [InlineAutoData]
