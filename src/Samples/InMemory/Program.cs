@@ -1,6 +1,7 @@
 // This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
 using Akc.Duende.IdentityServer.Management.Api;
+using Duende.IdentityServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddIdentityServer()
     .AddInMemoryClients(SampleConstants.Clients);
 
 builder.Services.AddInMemoryClientManagementApi();
+
+builder.Services.AddLocalApiAuthentication();
 
 var app = builder.Build();
 
@@ -37,7 +40,8 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-app.UseIdentityServerClientApi();
+app.UseIdentityServerClientApi()
+    .RequireAuthorization(IdentityServerConstants.LocalApi.PolicyName);
 
 app.MapRazorPages();
 
