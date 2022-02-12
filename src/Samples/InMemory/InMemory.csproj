@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="tempkey.jwk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="tempkey.jwk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Akc.Duende.IdentityServer.Management.Api" Version="0.1.41-pullrequest0020-0005" />
   </ItemGroup>
 
