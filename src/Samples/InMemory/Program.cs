@@ -10,15 +10,14 @@ builder.Services.AddRazorPages();
 
 builder.Services.Configure<ManagementApiOptions>(options =>
 {
-    options.BasePath = "/my/clients";
+    options.BasePath = "/my";
 });
 
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()
     .AddInMemoryApiScopes(SampleConstants.ApiScopes)
-    .AddInMemoryClients(SampleConstants.Clients);
-
-builder.Services.AddInMemoryClientManagementApi();
+    .AddInMemoryClients(SampleConstants.Clients)
+    .AddInMemoryManagementApi();
 
 builder.Services.AddLocalApiAuthentication();
 
@@ -40,7 +39,7 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-app.UseIdentityServerClientApi()
+app.UseIdentityServerManagementApi()
     .RequireAuthorization(IdentityServerConstants.LocalApi.PolicyName);
 
 app.MapRazorPages();
