@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'src/Samples/InMemory/**'
+      - '.github/workflows/sample-app.yml'
 
 env:
   AZURE_WEBAPP_NAME: akc-duende
@@ -15,7 +16,7 @@ jobs:
   deploy-in-memory-sample-app:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v2
       
       - name: Setup Dotnet
         uses: actions/setup-dotnet@v1
@@ -25,6 +26,7 @@ jobs:
       - name: Build and publish
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
+          dotnet nuget add source --username LouisG --password ${{ github.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/arkiaconsulting/index.json"
           dotnet restore
           dotnet build --configuration Release
           dotnet publish -c Release -o './app' 
