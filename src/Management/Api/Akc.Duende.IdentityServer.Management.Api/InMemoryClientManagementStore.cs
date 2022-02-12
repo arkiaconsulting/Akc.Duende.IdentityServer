@@ -8,7 +8,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
     internal class InMemoryClientManagementStore : IClientManagementStore
     {
         private readonly ICollection<Client> _inMemoryClients;
-        public InMemoryClientManagementStore(IEnumerable<Client> clients) => _inMemoryClients = (clients as ICollection<Client>) ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");//_secrets = clients.ToDictionary(//    c => c.ClientId,//    c => (ICollection<SecretInternal>)c.ClientSecrets.Select((s, i) => SecretInternal.FromModel(c.ClientId, s, i)).ToList());
+        public InMemoryClientManagementStore(IEnumerable<Client> clients) => _inMemoryClients = (clients as ICollection<Client>) ?? throw new InvalidOperationException($"Clients should be backed by a non fixed collection");
 
         public Task<Result<IEnumerable<Client>>> GetAll() =>
             Result.Success(_inMemoryClients.AsEnumerable())

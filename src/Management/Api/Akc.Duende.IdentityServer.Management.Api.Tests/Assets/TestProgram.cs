@@ -30,6 +30,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
                 .AddDeveloperSigningCredential()
                 .AddInMemoryClients(testData.Clients)
                 .AddInMemoryIdentityResources(testData.IdentityResources)
+                .AddInMemoryApiScopes(testData.ApiScopes)
                 .AddInMemoryManagementApi();
 
             builder.Services.AddLocalApiAuthentication();
