@@ -17,5 +17,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         {
             new IdentityResources.OpenId()
         };
+
+        public readonly IEnumerable<ApiScope> ApiScopes = new List<ApiScope>()
+        {
+        };
     }
 }

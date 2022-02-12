@@ -3,7 +3,6 @@
 using Akc.Duende.IdentityServer.Management.Api.Tests.Assets;
 using AutoFixture.Xunit2;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -15,24 +14,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
     [Trait("Category", "Integration")]
     public class ApiScopeManagementPipelineTests
     {
-        private HttpClient Client { get; }
-        private DefaultTestData TestData => _factory.Services.GetRequiredService<DefaultTestData>();
+        private HttpClient Client => _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/") });
         private readonly DefaultWebApplicationFactory _factory;
 
-        public ApiScopeManagementPipelineTests()
-        {
+        public ApiScopeManagementPipelineTests() =>
             _factory = new DefaultWebApplicationFactory();
-            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/") });
-        }
-
-        [Fact(DisplayName = "Pass when returning Api scopes")]
-        [Trait("Category", "API_SCOPE")]
-        public async Task Test01()
-        {
-            Func<Task> f = () => Client.GetApiScopes();
-
-            await f.Should().NotThrowAsync();
-        }
 
         [Trait("Category", "API_SCOPE")]
         [Theory(DisplayName = "Pass when creating an Api scope")]

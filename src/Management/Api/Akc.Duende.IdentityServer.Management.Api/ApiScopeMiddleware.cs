@@ -1,6 +1,7 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
 using CSharpFunctionalExtensions;
+using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -10,48 +11,32 @@ namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal class ApiScopeMiddleware
     {
-        private static readonly IDictionary<string, ApiScopeDto> Store = new Dictionary<string, ApiScopeDto>();
-
-        public static Task<IR> GetAll() =>
-            Results.Ok(new object()).AsTask();
-
-        public static Task<IR> Get(string name) =>
-            Result.SuccessIf(Store.ContainsKey(name), Store, "api scope not found")
-            .Bind(store => Result.Success(store[name]))
+        public static Task<IR> Get([FromRoute] string name, [FromServices] IResourceManagementStore store) =>
+            store.Get(name)
             .Match(
-                onSuccess: dto => Results.Ok(dto),
+                onSuccess: scope => Results.Ok(new ApiScopeDto(scope.Name, scope.DisplayName, scope.Description, scope.ShowInDiscoveryDocument, scope.UserClaims.ToArray(), scope.Properties, scope.Enabled, scope.Required)),
                 onFailure: error => Results.BadRequest(error)
-            )
-            .AsTask();
+            );
 
-        public static Task<IR> Create(string name, CreateUpdateApiScopeDto dto, [FromServices] IOptions<ManagementApiOptions> options) =>
-            Result.SuccessIf(!Store.ContainsKey(name), Store, "An Api scope with this name already exists")
-            .Tap(store =>
-                store.Add(name,
-                new ApiScopeDto(name, dto.DisplayName, dto.Description, dto.ShowInDiscoveryDocument, dto.UserClaims, dto.Properties, dto.Enabled, dto.Required)
-                )
-            )
+        public static Task<IR> Create([FromRoute] string name, [FromBody] CreateUpdateApiScopeDto dto, [FromServices] IResourceManagementStore store, [FromServices] IOptions<ManagementApiOptions> options) =>
+            store.Create(new ApiScope(name, dto.DisplayName, dto.UserClaims) { Description = dto.Description, Enabled = dto.Enabled, Properties = dto.Properties, Required = dto.Required, ShowInDiscoveryDocument = dto.ShowInDiscoveryDocument })
             .Match(
-                onSuccess: _ => Results.Created(HttpPipelineHelpers.FormatClientUri(name, options.Value), default),
+                onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(name, options.Value), default),
                 onFailure: error => Results.BadRequest(error)
-            )
-            .AsTask();
+            );
 
-        public static Task<IR> Update(string name, CreateUpdateApiScopeDto dto) =>
-            Result.SuccessIf(Store.ContainsKey(name), Store, "An Api scope with this name cannot be found")
-            .Tap(store => { store.Remove(name); store.Add(name, new ApiScopeDto(name, dto.DisplayName, dto.Description, dto.ShowInDiscoveryDocument, dto.UserClaims, dto.Properties, dto.Enabled, dto.Required)); })
+        public static Task<IR> Update([FromRoute] string name, [FromBody] CreateUpdateApiScopeDto dto, [FromServices] IResourceManagementStore store) =>
+            store.Update(new ApiScope(name, dto.DisplayName, dto.UserClaims) { Description = dto.Description, Enabled = dto.Enabled, Properties = dto.Properties, Required = dto.Required, ShowInDiscoveryDocument = dto.ShowInDiscoveryDocument })
             .Match(
-                onSuccess: _ => Results.Ok(),
+                onSuccess: () => Results.Ok(),
                 onFailure: error => Results.BadRequest(error)
-            ).AsTask();
+            );
 
-        public static Task<IR> Delete(string name) =>
-            Result.SuccessIf(Store.ContainsKey(name), Store, "An Api scope with this name cannot be found")
-            .Tap(store => store.Remove(name))
+        public static Task<IR> Delete([FromRoute] string name, [FromServices] IResourceManagementStore store) =>
+            store.Delete(name)
             .Match(
-                onSuccess: _ => Results.Ok(),
+                onSuccess: () => Results.Ok(),
                 onFailure: error => Results.NotFound(error)
-            )
-            .AsTask();
+            );
     }
 }
