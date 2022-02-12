@@ -1,12 +1,12 @@
 ﻿// This code is under Copyright (C) 2022 of Arkia Consulting SARL all right reserved
 
-using Microsoft.Extensions.DependencyInjection;
+using Akc.Duende.IdentityServer.Management.Api;
 
-namespace Akc.Duende.IdentityServer.Management.Api
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddInMemoryClientManagementApi(this IServiceCollection services) =>
-            services.AddSingleton<IClientManagementStore, InMemoryClientManagementStore>();
+        public static IServiceCollection AddInMemoryManagementApi(this IIdentityServerBuilder builder) =>
+            builder.Services.AddSingleton<IClientManagementStore, InMemoryClientManagementStore>();
     }
 }

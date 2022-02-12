@@ -9,21 +9,21 @@ namespace Akc.Duende.IdentityServer.Management.Api
 {
     public static class HttpPipelineExtensions
     {
-        public static IdentityServerClientApiEndpointBuilder UseIdentityServerClientApi(this IEndpointRouteBuilder app)
+        public static IdentityServerClientApiEndpointBuilder UseIdentityServerManagementApi(this IEndpointRouteBuilder app)
         {
             var options = app.ServiceProvider.GetRequiredService<IOptions<ManagementApiOptions>>().Value;
             var builders = new List<RouteHandlerBuilder>
             {
-                app.MapGet(options.BasePath, ClientMiddleware.GetAll),
-                app.MapGet($"{options.BasePath}/{{clientId}}", ClientMiddleware.Get),
-                app.MapPut($"{options.BasePath}/{{clientId}}", ClientMiddleware.Create),
-                app.MapPost($"{options.BasePath}/{{clientId}}", ClientMiddleware.Update),
-                app.MapDelete($"{options.BasePath}/{{clientId}}", ClientMiddleware.Delete),
+                app.MapGet($"{options.BasePath}/clients", ClientMiddleware.GetAll),
+                app.MapGet($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Get),
+                app.MapPut($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Create),
+                app.MapPost($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Delete),
 
-                app.MapGet($"{options.BasePath}/{{clientId}}/secrets/{{id}}", ClientMiddleware.GetSecret),
-                app.MapPut($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.AddSecret),
-                app.MapPost($"{options.BasePath}/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
-                app.MapDelete($"{options.BasePath}/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret)
+                app.MapGet($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.GetSecret),
+                app.MapPut($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.AddSecret),
+                app.MapPost($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
+                app.MapDelete($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret)
             };
 
             return new(app, builders);

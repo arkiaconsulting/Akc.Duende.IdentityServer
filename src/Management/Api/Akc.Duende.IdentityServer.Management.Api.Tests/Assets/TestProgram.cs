@@ -9,7 +9,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 {
     internal class TestProgram
     {
-        public const string BasePath = "/my/clients";
+        public const string BasePath = "/my";
 
         private static void Main(string[] args)
         {
@@ -21,7 +21,6 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
             var testData = new DefaultTestData();
 
-            builder.Services.AddInMemoryClientManagementApi();
             builder.Services.Configure<ManagementApiOptions>(options =>
             {
                 options.BasePath = BasePath;
@@ -30,7 +29,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
             builder.Services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryClients(testData.Clients)
-                .AddInMemoryIdentityResources(testData.IdentityResources);
+                .AddInMemoryIdentityResources(testData.IdentityResources)
+                .AddInMemoryManagementApi();
 
             builder.Services.AddLocalApiAuthentication();
 
@@ -44,7 +44,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
             app.UseAuthorization();
 
             app
-            .UseIdentityServerClientApi()
+            .UseIdentityServerManagementApi()
             .RequireAuthorization(IdentityServerConstants.LocalApi.PolicyName);
 
             app.Run();
