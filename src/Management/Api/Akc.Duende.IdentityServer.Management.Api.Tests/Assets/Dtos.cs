@@ -161,4 +161,6 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
     public record CreateClientSecretDto(int Id, string Type, string Value, string Description, DateTime? Expiration);
     public record UpdateClientSecretDto(int Id, string NewValue, string Description, DateTime? Expiration);
+
+    public record ApiScopeDto();
 }

@@ -34,5 +34,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
         public static Task<SecretDto?> GetClientSecret(this HttpClient client, string clientId, int id) =>
             client.GetFromJsonAsync<SecretDto>($"{clientId}/secrets/{id}");
+
+        public static Task<ApiScopeDto?> GetApiScopes(this HttpClient client) =>
+            client.GetFromJsonAsync<ApiScopeDto>(string.Empty);
     }
 }
