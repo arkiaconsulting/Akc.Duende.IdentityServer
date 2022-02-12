@@ -6,9 +6,13 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddInMemoryManagementApi(this IIdentityServerBuilder builder) =>
+        public static IIdentityServerBuilder AddInMemoryManagementApi(this IIdentityServerBuilder builder)
+        {
             builder.Services
             .AddTransient<IClientManagementStore, InMemoryClientManagementStore>()
             .AddTransient<IResourceManagementStore, InMemoryResourceManagementStore>();
+
+            return builder;
+        }
     }
 }
