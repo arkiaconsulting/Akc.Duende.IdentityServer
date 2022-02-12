@@ -23,7 +23,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         public ClientSecretManagementPipelineTests()
         {
             _factory = new DefaultWebApplicationFactory();
-            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/clients/") });
+            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/") });
         }
 
         [Theory(DisplayName = "Add a new client secret to an existing client")]

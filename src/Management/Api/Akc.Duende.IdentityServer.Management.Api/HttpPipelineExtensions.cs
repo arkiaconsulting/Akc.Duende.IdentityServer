@@ -23,7 +23,13 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 app.MapGet($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.GetSecret),
                 app.MapPut($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.AddSecret),
                 app.MapPost($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
-                app.MapDelete($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret)
+                app.MapDelete($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret),
+
+                app.MapGet($"{options.BasePath}/scopes", ApiScopeMiddleware.GetAll),
+                app.MapGet($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Get),
+                app.MapPut($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Create),
+                app.MapPost($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Delete),
             };
 
             return new(app, builders);
