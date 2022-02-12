@@ -22,7 +22,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         public ClientManagementPipelineTests()
         {
             _factory = new DefaultWebApplicationFactory();
-            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/clients/") });
+            Client = _factory.CreateClient(new() { BaseAddress = new($"https://localhost{TestProgram.BasePath}/") });
         }
 
         [Fact(DisplayName = "Return stored clients")]
