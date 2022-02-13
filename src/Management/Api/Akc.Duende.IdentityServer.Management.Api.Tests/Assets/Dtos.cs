@@ -170,7 +170,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         string[] UserClaims,
         IDictionary<string, string> Properties,
         bool Enabled,
-        bool Required);
+        bool Required,
+        bool Emphasize);
 
     public record CreateUpdateApiScopeDto(
         string DisplayName,
@@ -179,5 +180,6 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         string[] UserClaims,
         IDictionary<string, string> Properties,
         bool Enabled,
-        bool Required);
+        bool Required,
+        bool Emphasize);
 }
