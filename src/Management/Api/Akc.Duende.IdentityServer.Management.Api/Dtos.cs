@@ -117,7 +117,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
         string[] UserClaims,
         IDictionary<string, string> Properties,
         bool Enabled,
-        bool Required);
+        bool Required,
+        bool Emphasize);
 
     internal record ApiScopeDto(
         string Name,
@@ -127,5 +128,6 @@ namespace Akc.Duende.IdentityServer.Management.Api
         string[] UserClaims,
         IDictionary<string, string> Properties,
         bool Enabled,
-        bool Required);
+        bool Required,
+        bool Emphasize);
 }

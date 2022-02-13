@@ -70,7 +70,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 dto.UserClaims,
                 dto.Properties,
                 dto.Enabled,
-                dto.Required
+                dto.Required,
+                dto.Emphasize
             ));
         }
 
@@ -126,7 +127,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 updatedDto.UserClaims,
                 updatedDto.Properties,
                 updatedDto.Enabled,
-                updatedDto.Required
+                updatedDto.Required,
+                updatedDto.Emphasize
             ));
         }
 
