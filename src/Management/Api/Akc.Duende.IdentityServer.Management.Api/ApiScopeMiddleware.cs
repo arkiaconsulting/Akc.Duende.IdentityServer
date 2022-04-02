@@ -14,28 +14,28 @@ namespace Akc.Duende.IdentityServer.Management.Api
             store.Get(name)
             .Match(
                 onSuccess: scope => Results.Ok(scope.ToDto()),
-                onFailure: error => Results.BadRequest(error)
+                onFailure: Results.BadRequest
             );
 
         public static Task<IR> Create([FromRoute] string name, [FromBody] CreateUpdateApiScopeDto dto, [FromServices] IResourceManagementStore store, [FromServices] IOptions<ManagementApiOptions> options) =>
             store.Create(dto.ToModel(name))
             .Match(
                 onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(name, options.Value), default),
-                onFailure: error => Results.BadRequest(error)
+                onFailure: Results.BadRequest
             );
 
         public static Task<IR> Update([FromRoute] string name, [FromBody] CreateUpdateApiScopeDto dto, [FromServices] IResourceManagementStore store) =>
             store.Update(dto.ToModel(name))
             .Match(
                 onSuccess: () => Results.Ok(),
-                onFailure: error => Results.BadRequest(error)
+                onFailure: Results.BadRequest
             );
 
         public static Task<IR> Delete([FromRoute] string name, [FromServices] IResourceManagementStore store) =>
             store.Delete(name)
             .Match(
                 onSuccess: () => Results.Ok(),
-                onFailure: error => Results.NotFound(error)
+                onFailure: Results.NotFound
             );
     }
 }
