@@ -15,7 +15,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             store.GetAll()
             .Map(clients => clients.Select(DtoExtensions.FromModel))
             .Match(
-                onSuccess: clients => Results.Ok(clients),
+                onSuccess: Results.Ok,
                 onFailure: e => Results.BadRequest()
             );
 
@@ -54,7 +54,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Bind(client => store.GetSecret(client.ClientId, id))
             .Map(model => model.ToDto(id))
             .Match(
-                onSuccess: secret => Results.Ok(secret),
+                onSuccess: Results.Ok,
                 onFailure: e => Results.BadRequest()
             );
 

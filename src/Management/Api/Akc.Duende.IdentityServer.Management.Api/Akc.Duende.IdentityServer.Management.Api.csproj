@@ -2,37 +2,24 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<PackageId>Akc.Duende.IdentityServer.Management.Api</PackageId>
-		<Version>1.0.0</Version>
-		<Authors>Louis GERARD</Authors>
-		<Company>Arkia Consulting</Company>
-		<PackageTags>IdentityServer;Duende;Admin;Akc;Management</PackageTags>
+		<AssemblyName>Akc.Duende.IdentityServer.Management.Api</AssemblyName>
+		<RootNamespace>Akc.Duende.IdentityServer.Management.Api</RootNamespace>
+		<VersionPrefix>0.2.1</VersionPrefix>
 		<Description>
 			This client library enables working with Duende IdentityServer for managing resources
 			using REST Api.
-		</Description>
-		<RepositoryUrl>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</RepositoryUrl>
-		<RepositoryType>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageIconUrl />
-		<PackageIcon>icon.png</PackageIcon>
-		<RootNamespace>Akc.Duende.IdentityServer.Management.Api</RootNamespace>
-		<AssemblyName>Akc.Duende.IdentityServer.Management.Api</AssemblyName>
-		<PackageOutputPath>./.nupkg</PackageOutputPath>
+		</Description>		
 	</PropertyGroup>
 
+	<Import Project="..\..\..\Common.props" />
+
 	<ItemGroup>
-	  <PackageReference Include="CSharpFunctionalExtensions" Version="2.28.0" />
-	  <PackageReference Include="Duende.IdentityServer" Version="6.0.0" />
+		<PackageReference Include="CSharpFunctionalExtensions" Version="2.29.0" />
+		<PackageReference Include="Duende.IdentityServer" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="icon.png" Pack="true" PackagePath="" />
-	</ItemGroup>
-	
 </Project>

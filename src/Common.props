@@ -1,0 +1,50 @@
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>preview</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>embedded</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<ContinuousIntegrationBuild Condition="'$(TF_BUILD)' == 'true'">true"</ContinuousIntegrationBuild>
+		<Deterministic>true</Deterministic>
+
+		<!-- Version related -->
+		<IsLocalBuild Condition=" $(IsLocalBuild) == ''">True</IsLocalBuild>
+		<BuildNumber Condition=" $(IsLocalBuild) == 'True'">local</BuildNumber>
+		<Version Condition=" '$(BuildNumber)' != '' And $(Version) == ''">$(VersionPrefix)$(VersionSuffix)-$(BuildNumber)</Version>
+		<Version Condition=" '$(Version)' == '' ">$(VersionPrefix)$(VersionSuffix)</Version>
+		<AssemblyVersion Condition="$(AssemblyVersion) == ''">$(VersionPrefix).0</AssemblyVersion>
+		<FileVersion  Condition="$(FileVersion) == ''">$(AssemblyVersion)</FileVersion>
+
+		<!-- Package related -->
+		<Authors>Louis GERARD</Authors>
+		<Company>Arkia Consulting</Company>
+		<PackageTags>IdentityServer;Duende;Admin;Akc;Management</PackageTags>
+		<Copyright>© Arkia Consulting. All rights reserved.</Copyright>
+		<RepositoryUrl>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/arkiaconsulting/Akc.Duende.IdentityServer</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageIconUrl />
+		<PackageOutputPath>./.nupkg</PackageOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="System.Threading.Tasks"/>
+		<Using Include="System.IO"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)/icon.png" Pack="true" PackagePath="/">
+			<Visible>false</Visible>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+	</ItemGroup>
+</Project>
