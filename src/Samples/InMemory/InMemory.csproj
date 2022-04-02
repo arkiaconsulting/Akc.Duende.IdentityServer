@@ -16,8 +16,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Akc.Duende.IdentityServer.Management.Api" Version="0.1.41-pullrequest0020-0005" />
-  </ItemGroup>
-
 </Project>
