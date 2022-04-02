@@ -6,25 +6,16 @@ on:
     paths:
       - 'src/Management/Api/**'
 
+env:
+  BuildNumber: "${{ contains(github.ref, '/release/') && '' || format('preview.{0}', github.run_id) }}"
+
 jobs:
   publish-nuget:
     runs-on: ubuntu-latest
     steps:
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.7
-        with:
-          versionSpec: '5.x'
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Determine Version
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.7
-        with:
-          useConfigFile: true
-          configFilePath: ./.github/gitversion.yml  
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
@@ -39,9 +30,6 @@ jobs:
         working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api.Tests/
         run: |
           dotnet test --configuration Release \
-            /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }} \
-            /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} \
-            /p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }} \
             --collect:"XPlat Code Coverage" \
             --results-directory coverage \
             --logger trx
@@ -64,12 +52,20 @@ jobs:
         with:
           recreate: true
           path: code-coverage-results.md
-        
+
+      - name: Build
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api/
+        run: |
+          dotnet build --configuration Release -p:BuildNumber=${{ env.BuildNumber }} -p:IsLocalBuild=False
+
+      - name: Pack
+        working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api/
+        run: |
+          dotnet pack --no-build --configuration Release -p:BuildNumber=${{ env.BuildNumber }} -p:IsLocalBuild=False
+
       - name: Push
         working-directory: ./src/Management/Api/Akc.Duende.IdentityServer.Management.Api/
         run: |
-          dotnet pack --no-restore --output ./.nupkg --configuration Release \
-            /p:PackageVersion=${{ steps.gitversion.outputs.NuGetVersion }}
           dotnet nuget push \
             --api-key ${{ github.token }} \
             --source https://nuget.pkg.github.com/arkiaconsulting/index.json \
