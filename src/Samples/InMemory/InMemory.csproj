@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akc.Duende.IdentityServer.Management.Api" Version="0.2.1-preview.2082813069" />
+    <PackageReference Include="Akc.Duende.IdentityServer.Management.Api" Version="0.2.2-preview.2144855268" />
   </ItemGroup>
 
 </Project>
