@@ -2,6 +2,8 @@
 
 using Akc.Duende.IdentityServer.Management.Api.Tests.Assets;
 using AutoFixture.Xunit2;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -110,6 +112,33 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
 
             await f.Should().ThrowAsync<HttpRequestException>()
                 .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+        }
+
+        [Theory(DisplayName = "Pass when creating a simple client with client credentials")]
+        [Trait("Category", "CLIENT")]
+        [InlineAutoData]
+        public async Task Test09(string clientId)
+        {
+            var client = new ClientCreateDto
+            {
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedScopes = new[] { IdentityServerConstants.LocalApi.ScopeName }
+            };
+            using var _ = await Client.CreateClient(clientId, client);
+
+            var actualClient = await Client.GetClient(clientId);
+
+            // Creating a new client using IS type, because of IS default values
+            var expectedClient = new Client
+            {
+                ClientId = clientId,
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedScopes = { IdentityServerConstants.LocalApi.ScopeName },
+            };
+
+            actualClient!.Should().BeEquivalentTo(expectedClient, opts =>
+                opts.Excluding(c => c.ClientSecrets)
+            );
         }
     }
 }

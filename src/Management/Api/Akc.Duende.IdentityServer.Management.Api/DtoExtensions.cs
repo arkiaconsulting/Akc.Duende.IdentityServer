@@ -7,77 +7,224 @@ namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal static class DtoExtensions
     {
-        public static Client ToModel(this ClientInputDto dto, string clientId) =>
-            new()
+        public static Client ToModel(this ClientInputDto dto, string clientId)
+        {
+            var client = new Client
             {
                 ClientId = clientId,
                 ClientName = dto.ClientName,
                 Description = dto.Description,
-                AbsoluteRefreshTokenLifetime = dto.AbsoluteRefreshTokenLifetime,
-                AccessTokenLifetime = dto.AccessTokenLifetime,
-                AccessTokenType = dto.AccessTokenType,
-                AllowAccessTokensViaBrowser = dto.AllowAccessTokensViaBrowser,
                 AllowedCorsOrigins = dto.AllowedCorsOrigins,
                 AllowedGrantTypes = dto.AllowedGrantTypes,
                 AllowedIdentityTokenSigningAlgorithms = dto.AllowedIdentityTokenSigningAlgorithms,
                 AllowedScopes = dto.AllowedScopes,
-                AllowOfflineAccess = dto.AllowOfflineAccess,
-                AllowPlainTextPkce = dto.AllowPlainTextPkce,
-                AllowRememberConsent = dto.AllowRememberConsent,
-                AlwaysIncludeUserClaimsInIdToken = dto.AlwaysIncludeUserClaimsInIdToken,
-                AlwaysSendClientClaims = dto.AlwaysSendClientClaims,
-                AuthorizationCodeLifetime = dto.AuthorizationCodeLifetime,
-                BackChannelLogoutSessionRequired = dto.BackChannelLogoutSessionRequired,
                 BackChannelLogoutUri = dto.BackChannelLogoutUri,
                 CibaLifetime = dto.CibaLifetime,
                 Claims = dto.Claims,
-                ClientClaimsPrefix = dto.ClientClaimsPrefix,
                 ClientUri = dto.ClientUri,
                 ConsentLifetime = dto.ConsentLifetime,
-                DeviceCodeLifetime = dto.DeviceCodeLifetime,
-                Enabled = dto.Enabled,
-                EnableLocalLogin = dto.EnableLocalLogin,
-                FrontChannelLogoutSessionRequired = dto.FrontChannelLogoutSessionRequired,
                 FrontChannelLogoutUri = dto.FrontChannelLogoutUri,
                 IdentityProviderRestrictions = dto.IdentityProviderRestrictions,
-                IdentityTokenLifetime = dto.IdentityTokenLifetime,
-                IncludeJwtId = dto.IncludeJwtId,
                 LogoUri = dto.LogoUri,
                 PairWiseSubjectSalt = dto.PairWiseSubjectSalt,
                 PollingInterval = dto.PollingInterval,
                 PostLogoutRedirectUris = dto.PostLogoutRedirectUris,
                 Properties = dto.Properties,
-                ProtocolType = dto.ProtocolType,
                 RedirectUris = dto.RedirectUris,
-                RefreshTokenExpiration = dto.RefreshTokenExpiration,
-                RefreshTokenUsage = dto.RefreshTokenUsage,
-                RequireClientSecret = dto.RequireClientSecret,
-                RequireConsent = dto.RequireConsent,
-                RequirePkce = dto.RequirePkce,
-                RequireRequestObject = dto.RequireRequestObject,
-                SlidingRefreshTokenLifetime = dto.SlidingRefreshTokenLifetime,
-                UpdateAccessTokenClaimsOnRefresh = dto.UpdateAccessTokenClaimsOnRefresh,
                 UserCodeType = dto.UserCodeType,
                 UserSsoLifetime = dto.UserSsoLifetime
             };
 
+            if (!string.IsNullOrWhiteSpace(dto.ProtocolType))
+            {
+                client.ProtocolType = dto.ProtocolType;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.ClientClaimsPrefix))
+            {
+                client.ClientClaimsPrefix = dto.ClientClaimsPrefix;
+            }
+
+            if (dto.AbsoluteRefreshTokenLifetime.HasValue)
+            {
+                client.AbsoluteRefreshTokenLifetime = dto.AbsoluteRefreshTokenLifetime.Value;
+            }
+
+            if (dto.AccessTokenLifetime.HasValue)
+            {
+                client.AccessTokenLifetime = dto.AccessTokenLifetime.Value;
+            }
+
+            if (dto.AccessTokenType.HasValue)
+            {
+                client.AccessTokenType = dto.AccessTokenType.Value;
+            }
+
+            if (dto.AllowAccessTokensViaBrowser.HasValue)
+            {
+                client.AllowAccessTokensViaBrowser = dto.AllowAccessTokensViaBrowser.Value;
+            }
+
+            if (dto.AllowOfflineAccess.HasValue)
+            {
+                client.AllowOfflineAccess = dto.AllowOfflineAccess.Value;
+            }
+
+            if (dto.AllowPlainTextPkce.HasValue)
+            {
+                client.AllowPlainTextPkce = dto.AllowPlainTextPkce.Value;
+            }
+
+            if (dto.AllowRememberConsent.HasValue)
+            {
+                client.AllowRememberConsent = dto.AllowRememberConsent.Value;
+            }
+
+            if (dto.AlwaysIncludeUserClaimsInIdToken.HasValue)
+            {
+                client.AlwaysIncludeUserClaimsInIdToken = dto.AlwaysIncludeUserClaimsInIdToken.Value;
+            }
+
+            if (dto.AlwaysSendClientClaims.HasValue)
+            {
+                client.AlwaysSendClientClaims = dto.AlwaysSendClientClaims.Value;
+            }
+
+            if (dto.AuthorizationCodeLifetime.HasValue)
+            {
+                client.AuthorizationCodeLifetime = dto.AuthorizationCodeLifetime.Value;
+            }
+
+            if (dto.BackChannelLogoutSessionRequired.HasValue)
+            {
+                client.BackChannelLogoutSessionRequired = dto.BackChannelLogoutSessionRequired.Value;
+            }
+
+            if (dto.DeviceCodeLifetime.HasValue)
+            {
+                client.DeviceCodeLifetime = dto.DeviceCodeLifetime.Value;
+            }
+
+            if (dto.Enabled.HasValue)
+            {
+                client.Enabled = dto.Enabled.Value;
+            }
+
+            if (dto.EnableLocalLogin.HasValue)
+            {
+                client.EnableLocalLogin = dto.EnableLocalLogin.Value;
+            }
+
+            if (dto.FrontChannelLogoutSessionRequired.HasValue)
+            {
+                client.FrontChannelLogoutSessionRequired = dto.FrontChannelLogoutSessionRequired.Value;
+            }
+
+            if (dto.IdentityTokenLifetime.HasValue)
+            {
+                client.IdentityTokenLifetime = dto.IdentityTokenLifetime.Value;
+            }
+
+            if (dto.IncludeJwtId.HasValue)
+            {
+                client.IncludeJwtId = dto.IncludeJwtId.Value;
+            }
+
+            if (dto.RefreshTokenExpiration.HasValue)
+            {
+                client.RefreshTokenExpiration = dto.RefreshTokenExpiration.Value;
+            }
+
+            if (dto.RefreshTokenUsage.HasValue)
+            {
+                client.RefreshTokenUsage = dto.RefreshTokenUsage.Value;
+            }
+
+            if (dto.RequireClientSecret.HasValue)
+            {
+                client.RequireClientSecret = dto.RequireClientSecret.Value;
+            }
+
+            if (dto.RequireConsent.HasValue)
+            {
+                client.RequireConsent = dto.RequireConsent.Value;
+            }
+
+            if (dto.RequirePkce.HasValue)
+            {
+                client.RequirePkce = dto.RequirePkce.Value;
+            }
+
+            if (dto.RequireRequestObject.HasValue)
+            {
+                client.RequireRequestObject = dto.RequireRequestObject.Value;
+            }
+
+            if (dto.SlidingRefreshTokenLifetime.HasValue)
+            {
+                client.SlidingRefreshTokenLifetime = dto.SlidingRefreshTokenLifetime.Value;
+            }
+
+            if (dto.UpdateAccessTokenClaimsOnRefresh.HasValue)
+            {
+                client.UpdateAccessTokenClaimsOnRefresh = dto.UpdateAccessTokenClaimsOnRefresh.Value;
+            }
+
+            return client;
+        }
+
         public static ClientOutputDto FromModel(this Client model) =>
-            new(
-                model.ClientId, model.ClientName, model.Description, model.Enabled, model.ProtocolType,
-                model.RequireClientSecret, model.ClientUri, model.LogoUri, model.RequireConsent,
-                model.AllowRememberConsent, model.RequirePkce,
-                model.AllowPlainTextPkce, model.AllowedGrantTypes.ToArray(), model.RedirectUris.ToArray(),
-                model.PostLogoutRedirectUris.ToArray(), model.RequireRequestObject, model.AllowAccessTokensViaBrowser,
-                model.FrontChannelLogoutUri, model.BackChannelLogoutUri, model.FrontChannelLogoutSessionRequired,
-                model.BackChannelLogoutSessionRequired, model.AllowOfflineAccess, model.AllowedScopes.ToArray(),
-                model.AlwaysIncludeUserClaimsInIdToken, model.IdentityTokenLifetime, model.AuthorizationCodeLifetime,
-                model.AllowedIdentityTokenSigningAlgorithms.ToArray(), model.AbsoluteRefreshTokenLifetime, model.AccessTokenLifetime,
-                model.SlidingRefreshTokenLifetime, model.ConsentLifetime, model.RefreshTokenUsage, model.UpdateAccessTokenClaimsOnRefresh,
-                model.RefreshTokenExpiration, model.AccessTokenType, model.EnableLocalLogin, model.IdentityProviderRestrictions.ToArray(),
-                model.IncludeJwtId, model.Claims.ToArray(), model.AlwaysSendClientClaims, model.ClientClaimsPrefix,
-                model.PairWiseSubjectSalt, model.UserSsoLifetime, model.UserCodeType, model.DeviceCodeLifetime,
-                model.CibaLifetime, model.PollingInterval, model.AllowedCorsOrigins.ToArray(), model.Properties
-            );
+            new(model.ClientId)
+            {
+                ClientName = model.ClientName,
+                Description = model.Description,
+                Enabled = model.Enabled,
+                ProtocolType = model.ProtocolType,
+                RequireClientSecret = model.RequireClientSecret,
+                ClientUri = model.ClientUri,
+                LogoUri = model.LogoUri,
+                RequireConsent = model.RequireConsent,
+                AllowRememberConsent = model.AllowRememberConsent,
+                RequirePkce = model.RequirePkce,
+                AllowPlainTextPkce = model.AllowPlainTextPkce,
+                AllowedGrantTypes = model.AllowedGrantTypes?.ToArray(),
+                RedirectUris = model.RedirectUris?.ToArray() ?? Array.Empty<string>(),
+                PostLogoutRedirectUris = model.PostLogoutRedirectUris?.ToArray() ?? Array.Empty<string>(),
+                RequireRequestObject = model.RequireRequestObject,
+                AllowAccessTokensViaBrowser = model.AllowAccessTokensViaBrowser,
+                FrontChannelLogoutUri = model.FrontChannelLogoutUri,
+                BackChannelLogoutUri = model.BackChannelLogoutUri,
+                FrontChannelLogoutSessionRequired = model.FrontChannelLogoutSessionRequired,
+                BackChannelLogoutSessionRequired = model.BackChannelLogoutSessionRequired,
+                AllowOfflineAccess = model.AllowOfflineAccess,
+                AllowedScopes = model.AllowedScopes?.ToArray(),
+                AlwaysIncludeUserClaimsInIdToken = model.AlwaysIncludeUserClaimsInIdToken,
+                IdentityTokenLifetime = model.IdentityTokenLifetime,
+                AuthorizationCodeLifetime = model.AuthorizationCodeLifetime,
+                AllowedIdentityTokenSigningAlgorithms = model.AllowedIdentityTokenSigningAlgorithms?.ToArray() ?? Array.Empty<string>(),
+                AbsoluteRefreshTokenLifetime = model.AbsoluteRefreshTokenLifetime,
+                AccessTokenLifetime = model.AccessTokenLifetime,
+                SlidingRefreshTokenLifetime = model.SlidingRefreshTokenLifetime,
+                ConsentLifetime = model.ConsentLifetime,
+                RefreshTokenUsage = model.RefreshTokenUsage,
+                UpdateAccessTokenClaimsOnRefresh = model.UpdateAccessTokenClaimsOnRefresh,
+                RefreshTokenExpiration = model.RefreshTokenExpiration,
+                AccessTokenType = model.AccessTokenType,
+                EnableLocalLogin = model.EnableLocalLogin,
+                IdentityProviderRestrictions = model.IdentityProviderRestrictions?.ToArray() ?? Array.Empty<string>(),
+                IncludeJwtId = model.IncludeJwtId,
+                Claims = model.Claims?.ToArray() ?? Array.Empty<ClientClaim>(),
+                AlwaysSendClientClaims = model.AlwaysSendClientClaims,
+                ClientClaimsPrefix = model.ClientClaimsPrefix,
+                PairWiseSubjectSalt = model.PairWiseSubjectSalt,
+                UserSsoLifetime = model.UserSsoLifetime,
+                UserCodeType = model.UserCodeType,
+                DeviceCodeLifetime = model.DeviceCodeLifetime,
+                CibaLifetime = model.CibaLifetime,
+                PollingInterval = model.PollingInterval,
+                AllowedCorsOrigins = model.AllowedCorsOrigins?.ToArray() ?? Array.Empty<string>(),
+                Properties = model.Properties ?? new Dictionary<string, string>()
+            };
 
         public static Secret ToModel(this CreateClientSecretInputDto dto) =>
             new(dto.Value.ToSha256(), dto.Description, dto.Expiration) { Type = dto.Type };

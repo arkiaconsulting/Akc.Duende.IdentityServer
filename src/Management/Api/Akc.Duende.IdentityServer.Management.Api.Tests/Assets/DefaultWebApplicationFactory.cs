@@ -6,6 +6,5 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 {
     internal class DefaultWebApplicationFactory : WebApplicationFactory<TestProgram>
     {
-
     }
 }
