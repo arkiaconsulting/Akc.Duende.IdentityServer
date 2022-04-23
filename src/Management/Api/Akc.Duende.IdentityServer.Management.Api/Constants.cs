@@ -6,7 +6,15 @@ namespace Akc.Duende.IdentityServer.Management.Api
     {
         public static class Paths
         {
-            public const string Clients = "/api/clients";
+            public const string DefaultBasePath = "/api";
+
+            internal static class SubPaths
+            {
+                public const string Clients = "clients";
+                public const string ClientSecrets = "secrets";
+                public const string ApiScopes = "scopes";
+                public const string ApiResources = "resources";
+            }
         }
     }
 }

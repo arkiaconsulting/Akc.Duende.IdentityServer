@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using static Akc.Duende.IdentityServer.Management.Api.Constants.Paths;
 
 namespace Akc.Duende.IdentityServer.Management.Api
 {
@@ -14,26 +15,26 @@ namespace Akc.Duende.IdentityServer.Management.Api
             var options = app.ServiceProvider.GetRequiredService<IOptions<ManagementApiOptions>>().Value;
             var builders = new List<RouteHandlerBuilder>
             {
-                app.MapGet($"{options.BasePath}/clients", ClientMiddleware.GetAll),
-                app.MapGet($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Get),
-                app.MapPut($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Create),
-                app.MapPost($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Update),
-                app.MapDelete($"{options.BasePath}/clients/{{clientId}}", ClientMiddleware.Delete),
+                app.MapGet($"{options.BasePath}/{SubPaths.Clients}", ClientMiddleware.GetAll),
+                app.MapGet($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Get),
+                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Create),
+                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Delete),
 
-                app.MapGet($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.GetSecret),
-                app.MapPut($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.AddSecret),
-                app.MapPost($"{options.BasePath}/clients/{{clientId}}/secrets", ClientMiddleware.UpdateSecret),
-                app.MapDelete($"{options.BasePath}/clients/{{clientId}}/secrets/{{id}}", ClientMiddleware.DeleteSecret),
+                app.MapGet($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.GetSecret),
+                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}", ClientMiddleware.AddSecret),
+                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}", ClientMiddleware.UpdateSecret),
+                app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.DeleteSecret),
 
-                app.MapGet($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Get),
-                app.MapPut($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Create),
-                app.MapPost($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Update),
-                app.MapDelete($"{options.BasePath}/scopes/{{name}}", ApiScopeMiddleware.Delete),
+                app.MapGet($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Get),
+                app.MapPut($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Create),
+                app.MapPost($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Delete),
 
-                app.MapPut($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Create),
-                app.MapGet($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Get),
-                app.MapPost($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Update),
-                app.MapDelete($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Delete),
+                app.MapPut($"{options.BasePath}/{SubPaths.ApiResources}/{{name}}", ApiResourceMiddleware.Create),
+                app.MapGet($"{options.BasePath}/{SubPaths.ApiResources}/{{name}}", ApiResourceMiddleware.Get),
+                app.MapPost($"{options.BasePath}/{SubPaths.ApiResources}/{{name}}", ApiResourceMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/{SubPaths.ApiResources}/{{name}}", ApiResourceMiddleware.Delete),
             };
 
             return new(app, builders);
