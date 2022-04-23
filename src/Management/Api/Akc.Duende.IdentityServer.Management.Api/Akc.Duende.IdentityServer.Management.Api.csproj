@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>Akc.Duende.IdentityServer.Management.Api</AssemblyName>
 		<RootNamespace>Akc.Duende.IdentityServer.Management.Api</RootNamespace>
-		<VersionPrefix>0.2.2</VersionPrefix>
+		<VersionPrefix>0.3.0</VersionPrefix>
 		<Description>
 			This client library enables working with Duende IdentityServer for managing resources
 			using REST Api.
