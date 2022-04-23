@@ -55,5 +55,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
         public static Task<ApiResourceDto?> GetApiResource(this HttpClient client, string name) =>
             client.GetFromJsonAsync<ApiResourceDto>($"resources/{name}");
+
+        public static Task<HttpResponseMessage> UpdateApiResource(this HttpClient client, string name, CreateUpdateApiResourceDto dto) =>
+            client.PostAsJsonAsync($"resources/{name}", dto);
     }
 }

@@ -80,5 +80,44 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 dto.Scopes
             ));
         }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Fail when updating an Api resource that does not exist")]
+        [InlineAutoData]
+        public async Task Test07(string name, CreateUpdateApiResourceDto dto)
+        {
+            using var response = await Client.UpdateApiResource(name, dto);
+
+            response.Should().Be400BadRequest();
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Pass when updating an Api resource that does already exist")]
+        [InlineAutoData]
+        public async Task Test08(string name, CreateUpdateApiResourceDto dto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            using var response = await Client.UpdateApiResource(name, dto);
+
+            response.Should().Be200Ok();
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Effectively update the Api resource")]
+        [InlineAutoData]
+        public async Task Test09(string name, CreateUpdateApiResourceDto dto, CreateUpdateApiResourceDto updatedDto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            await Client.UpdateApiResource(name, updatedDto);
+
+            var actualApiResource = await Client.GetApiResource(name);
+            actualApiResource!.Should().BeEquivalentTo(new ApiResourceDto(
+                name,
+                updatedDto.DisplayName,
+                updatedDto.Scopes
+            ));
+        }
     }
 }
