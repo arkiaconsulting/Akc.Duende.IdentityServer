@@ -184,4 +184,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         bool Enabled,
         bool Required,
         bool Emphasize);
+
+    public record CreateUpdateApiResourceDto(
+        string DisplayName,
+        string[] Scopes);
 }

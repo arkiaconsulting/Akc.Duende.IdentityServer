@@ -136,4 +136,13 @@ namespace Akc.Duende.IdentityServer.Management.Api
         bool Enabled,
         bool Required,
         bool Emphasize);
+
+    internal record CreateUpdateApiResourceDto(
+        string DisplayName,
+        string[] Scopes);
+
+    internal record ApiResourceDto(
+        string Name,
+        string DisplayName,
+        string[] Scopes);
 }

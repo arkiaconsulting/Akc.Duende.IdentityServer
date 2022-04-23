@@ -10,7 +10,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services
             .AddTransient<IClientManagementStore, InMemoryClientManagementStore>()
-            .AddTransient<IResourceManagementStore, InMemoryResourceManagementStore>();
+            .AddTransient<IResourceManagementStore, InMemoryResourceManagementStore>()
+            .AddTransient<IApiResourceManagementStore, InMemoryApiResourceManagementStore>();
 
             return builder;
         }

@@ -21,5 +21,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         public readonly IEnumerable<ApiScope> ApiScopes = new List<ApiScope>()
         {
         };
+
+        public readonly IEnumerable<ApiResource> ApiResources = new List<ApiResource>()
+        {
+        };
     }
 }
