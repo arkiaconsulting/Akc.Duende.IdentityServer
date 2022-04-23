@@ -16,6 +16,7 @@ builder.Services.Configure<ManagementApiOptions>(options =>
 builder.Services.AddIdentityServer()
     .AddDeveloperSigningCredential()
     .AddInMemoryApiScopes(SampleConstants.ApiScopes)
+    .AddInMemoryApiResources(SampleConstants.ApiResources)
     .AddInMemoryClients(SampleConstants.Clients)
     .AddInMemoryManagementApi();
 
