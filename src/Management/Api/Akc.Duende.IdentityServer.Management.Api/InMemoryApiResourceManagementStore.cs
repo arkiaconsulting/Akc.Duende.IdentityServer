@@ -17,9 +17,13 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Tap(() => _apiResources.Add(apiResource))
             .AsTask();
 
+        Task<Result<ApiResource>> IApiResourceManagementStore.Get(string name) =>
+            TryFind(_apiResources, name)
+            .AsTask();
+
         #region Private
 
-        private static Result<ApiScope> TryFind(IEnumerable<ApiScope> apiResources, string name) =>
+        private static Result<ApiResource> TryFind(IEnumerable<ApiResource> apiResources, string name) =>
             Result.SuccessIf(
                 apiResources.Any(s => s.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)),
                 apiResources,
