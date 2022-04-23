@@ -8,5 +8,6 @@ namespace Akc.Duende.IdentityServer.Management.Api
     internal interface IApiResourceManagementStore
     {
         Task<Result> Create(ApiResource apiResource);
+        Task<Result<ApiResource>> Get(string name);
     }
 }

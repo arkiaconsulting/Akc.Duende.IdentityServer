@@ -263,7 +263,9 @@ namespace Akc.Duende.IdentityServer.Management.Api
 
         public static ApiResource ToModel(this CreateUpdateApiResourceDto dto, string name) =>
             new(name,
-                dto.DisplayName,
-                dto.Scopes);
+                dto.DisplayName)
+            {
+                Scopes = dto.Scopes.ToArray()
+            };
     }
 }

@@ -3,6 +3,8 @@
 using Akc.Duende.IdentityServer.Management.Api.Tests.Assets;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -40,5 +42,43 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
             response.Should().Be400BadRequest();
         }
 
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Fail when getting an Api resource that does not exist")]
+        [InlineAutoData]
+        public async Task Test03(string name)
+        {
+            Func<Task> f = () => Client.GetApiResource(name);
+
+            await f.Should().ThrowAsync<HttpRequestException>()
+                .Where(e => e.StatusCode == HttpStatusCode.NotFound);
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Pass when getting an Api resource that does exist")]
+        [InlineAutoData]
+        public async Task Test04(string name, CreateUpdateApiResourceDto dto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            var apiResource = await Client.GetApiResource(name);
+
+            apiResource.Should().NotBeNull();
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Get right Api resource data when getting it")]
+        [InlineAutoData]
+        public async Task Test05(string name, CreateUpdateApiResourceDto dto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            var apiResource = await Client.GetApiResource(name);
+
+            apiResource!.Should().BeEquivalentTo(new ApiResourceDto(
+                name,
+                dto.DisplayName,
+                dto.Scopes
+            ));
+        }
     }
 }
