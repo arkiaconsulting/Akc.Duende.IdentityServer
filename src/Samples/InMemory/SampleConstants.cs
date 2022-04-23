@@ -10,6 +10,11 @@ internal class SampleConstants
         new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
     };
 
+    public static IEnumerable<ApiResource> ApiResources { get; } = new List<ApiResource>
+    {
+        new ApiResource("api1", "Api 1") { Scopes = { "api1_read" }}
+    };
+
     public static IEnumerable<Client> Clients { get; } = new List<Client>
     {
         new Client
