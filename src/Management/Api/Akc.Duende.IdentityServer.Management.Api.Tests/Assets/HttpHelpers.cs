@@ -49,5 +49,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
         public static Task<HttpResponseMessage> DeleteApiScope(this HttpClient client, string name) =>
             client.DeleteAsync($"scopes/{name}");
+
+        public static Task<HttpResponseMessage> CreateApiResource(this HttpClient client, string name, CreateUpdateApiResourceDto dto) =>
+            client.PutAsJsonAsync($"resources/{name}", dto);
     }
 }

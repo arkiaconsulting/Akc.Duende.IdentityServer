@@ -41,6 +41,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
                 .AddInMemoryClients(testData.Clients)
                 .AddInMemoryIdentityResources(testData.IdentityResources)
                 .AddInMemoryApiScopes(testData.ApiScopes)
+                .AddInMemoryApiResources(testData.ApiResources)
                 .AddInMemoryManagementApi();
 
             builder.Services.AddAuthentication()

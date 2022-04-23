@@ -255,5 +255,15 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 ShowInDiscoveryDocument = dto.ShowInDiscoveryDocument,
                 Emphasize = dto.Emphasize
             };
+
+        public static ApiResourceDto ToDto(this ApiResource model) =>
+            new(model.Name,
+                model.DisplayName,
+                model.Scopes.ToArray());
+
+        public static ApiResource ToModel(this CreateUpdateApiResourceDto dto, string name) =>
+            new(name,
+                dto.DisplayName,
+                dto.Scopes);
     }
 }
