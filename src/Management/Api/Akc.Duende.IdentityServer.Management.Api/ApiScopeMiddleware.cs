@@ -14,7 +14,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             store.Get(name)
             .Match(
                 onSuccess: scope => Results.Ok(scope.ToDto()),
-                onFailure: Results.BadRequest
+                onFailure: Results.NotFound
             );
 
         public static Task<IR> Create([FromRoute] string name, [FromBody] CreateUpdateApiScopeDto dto, [FromServices] IResourceManagementStore store, [FromServices] IOptions<ManagementApiOptions> options) =>
