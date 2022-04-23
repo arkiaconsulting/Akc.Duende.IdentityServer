@@ -58,5 +58,8 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
 
         public static Task<HttpResponseMessage> UpdateApiResource(this HttpClient client, string name, CreateUpdateApiResourceDto dto) =>
             client.PostAsJsonAsync($"resources/{name}", dto);
+
+        public static Task<HttpResponseMessage> DeleteApiResource(this HttpClient client, string name) =>
+            client.DeleteAsync($"resources/{name}");
     }
 }

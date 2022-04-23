@@ -30,5 +30,12 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 onSuccess: () => Results.Ok(),
                 onFailure: Results.BadRequest
             );
+
+        public static Task<IR> Delete([FromRoute] string name, [FromServices] IApiResourceManagementStore store) =>
+            store.Delete(name)
+            .Match(
+                onSuccess: () => Results.Ok(),
+                onFailure: Results.NotFound
+            );
     }
 }
