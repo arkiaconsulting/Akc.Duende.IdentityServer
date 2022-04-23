@@ -26,6 +26,11 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Tap(scope => { _apiResources.Remove(scope); _apiResources.Add(apiResource); })
             .ForgetValue();
 
+        Task<Result> IApiResourceManagementStore.Delete(string name) =>
+            TryFind(_apiResources, name)
+            .Tap(scope => _apiResources.Remove(scope))
+            .ForgetValue();
+
         #region Private
 
         private static Result<ApiResource> TryFind(IEnumerable<ApiResource> apiResources, string name) =>

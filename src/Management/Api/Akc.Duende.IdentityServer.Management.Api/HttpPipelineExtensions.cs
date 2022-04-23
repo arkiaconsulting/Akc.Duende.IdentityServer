@@ -33,6 +33,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 app.MapPut($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Create),
                 app.MapGet($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Get),
                 app.MapPost($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Update),
+                app.MapDelete($"{options.BasePath}/resources/{{name}}", ApiResourceMiddleware.Delete),
             };
 
             return new(app, builders);

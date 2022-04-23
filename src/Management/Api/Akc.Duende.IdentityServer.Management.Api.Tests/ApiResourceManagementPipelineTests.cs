@@ -119,5 +119,41 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
                 updatedDto.Scopes
             ));
         }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Fail when deleting an Api resource that does not exist")]
+        [InlineAutoData]
+        public async Task Test10(string name)
+        {
+            using var response = await Client.DeleteApiResource(name);
+
+            response.Should().Be404NotFound();
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Pass when deleting an Api resource that does already exist")]
+        [InlineAutoData]
+        public async Task Test11(string name, CreateUpdateApiResourceDto dto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            using var response = await Client.DeleteApiResource(name);
+
+            response.Should().Be200Ok();
+        }
+
+        [Trait("Category", "API_RESOURCE")]
+        [Theory(DisplayName = "Effectively delete an Api resource")]
+        [InlineAutoData]
+        public async Task Test12(string name, CreateUpdateApiResourceDto dto)
+        {
+            await Client.CreateApiResource(name, dto);
+
+            await Client.DeleteApiResource(name);
+
+            Func<Task> f = () => Client.GetApiResource(name);
+            await f.Should().ThrowAsync<HttpRequestException>()
+                .Where(e => e.StatusCode == HttpStatusCode.NotFound);
+        }
     }
 }
