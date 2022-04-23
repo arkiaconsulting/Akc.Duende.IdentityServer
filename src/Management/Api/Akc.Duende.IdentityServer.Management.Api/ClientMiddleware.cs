@@ -23,7 +23,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             store.Get(clientId)
             .Match(
                 onSuccess: client => Results.Ok(client.FromModel()),
-                onFailure: e => Results.BadRequest()
+                onFailure: e => Results.NotFound()
             );
 
         public static Task<IR> Create(string clientId, ClientInputDto client, [FromServices] IClientManagementStore store, [FromServices] IOptions<ManagementApiOptions> options) =>
@@ -55,7 +55,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Map(model => model.ToDto(id))
             .Match(
                 onSuccess: Results.Ok,
-                onFailure: e => Results.BadRequest()
+                onFailure: e => Results.NotFound()
             );
 
         public static Task<IR> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>

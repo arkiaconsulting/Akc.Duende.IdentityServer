@@ -38,7 +38,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
             Func<Task> f = () => Client.GetApiScope(name);
 
             await f.Should().ThrowAsync<HttpRequestException>()
-                .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+                .Where(e => e.StatusCode == HttpStatusCode.NotFound);
         }
 
         [Trait("Category", "API_SCOPE")]
@@ -165,7 +165,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
 
             Func<Task> f = () => Client.GetApiScope(name);
             await f.Should().ThrowAsync<HttpRequestException>()
-                .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+                .Where(e => e.StatusCode == HttpStatusCode.NotFound);
         }
     }
 }

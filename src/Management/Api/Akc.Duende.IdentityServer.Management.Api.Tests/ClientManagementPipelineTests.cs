@@ -111,7 +111,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
             Func<Task> f = () => Client.GetClient(clientId);
 
             await f.Should().ThrowAsync<HttpRequestException>()
-                .Where(e => e.StatusCode == HttpStatusCode.BadRequest);
+                .Where(e => e.StatusCode == HttpStatusCode.NotFound);
         }
 
         [Theory(DisplayName = "Pass when creating a simple client with client credentials")]
