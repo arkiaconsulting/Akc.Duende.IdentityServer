@@ -21,6 +21,11 @@ namespace Akc.Duende.IdentityServer.Management.Api
             TryFind(_apiResources, name)
             .AsTask();
 
+        Task<Result> IApiResourceManagementStore.Update(ApiResource apiResource) =>
+            TryFind(_apiResources, apiResource.Name)
+            .Tap(scope => { _apiResources.Remove(scope); _apiResources.Add(apiResource); })
+            .ForgetValue();
+
         #region Private
 
         private static Result<ApiResource> TryFind(IEnumerable<ApiResource> apiResources, string name) =>

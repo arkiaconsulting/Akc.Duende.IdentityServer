@@ -23,5 +23,12 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 onSuccess: () => Results.Created(HttpPipelineHelpers.FormatClientUri(name, options.Value), default),
                 onFailure: Results.BadRequest
             );
+
+        public static Task<IR> Update([FromRoute] string name, [FromBody] CreateUpdateApiResourceDto dto, [FromServices] IApiResourceManagementStore store) =>
+            store.Update(dto.ToModel(name))
+            .Match(
+                onSuccess: () => Results.Ok(),
+                onFailure: Results.BadRequest
+            );
     }
 }

@@ -9,5 +9,6 @@ namespace Akc.Duende.IdentityServer.Management.Api
     {
         Task<Result> Create(ApiResource apiResource);
         Task<Result<ApiResource>> Get(string name);
+        Task<Result> Update(ApiResource apiResource);
     }
 }
