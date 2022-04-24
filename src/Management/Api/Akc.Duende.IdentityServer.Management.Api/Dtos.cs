@@ -111,7 +111,7 @@ namespace Akc.Duende.IdentityServer.Management.Api
         public IDictionary<string, string>? Properties { get; set; }
     }
 
-    public record SecretDto(int Id, string Type, string Value, string Description, DateTime? Expiration);
+    public record SecretDto(string Name, string Type, string Value, string Description, DateTime? Expiration);
     public record CreateClientSecretInputDto(string Type, string Value, string Description, DateTime? Expiration);
 
     public record UpdateClientSecretInputDto(string NewValue, string Description, DateTime? Expiration);

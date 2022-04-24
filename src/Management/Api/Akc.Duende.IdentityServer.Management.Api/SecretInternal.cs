@@ -6,16 +6,16 @@ namespace Akc.Duende.IdentityServer.Management.Api
 {
     internal class SecretInternal : Secret
     {
-        public int Id { get; }
+        public string Id { get; }
 
-        public SecretInternal(int id, string type, string value, string description, DateTime? expiration)
+        public SecretInternal(string id, string type, string value, string description, DateTime? expiration)
             : base(value, description, expiration)
         {
             Id = id;
             Type = type;
         }
 
-        public static SecretInternal FromModel(Secret secret, int index) =>
-            new(index, secret.Type, secret.Value, secret.Description, secret.Expiration);
+        public static SecretInternal FromModel(Secret secret, string id) =>
+            new(id, secret.Type, secret.Value, secret.Description, secret.Expiration);
     }
 }

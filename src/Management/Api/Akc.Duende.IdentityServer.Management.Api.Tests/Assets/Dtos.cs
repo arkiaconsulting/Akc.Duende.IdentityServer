@@ -159,7 +159,7 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         string[] AllowedCorsOrigins,
         IDictionary<string, string> Properties);
 
-    public record SecretDto(int Id, string Type, string Value, string Description, DateTime? Expiration);
+    public record SecretDto(string Name, string Type, string Value, string Description, DateTime? Expiration);
 
     public record CreateClientSecretDto(string Type, string Value, string Description, DateTime? Expiration);
     public record UpdateClientSecretDto(string NewValue, string Description, DateTime? Expiration);

@@ -21,10 +21,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Update),
                 app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Delete),
 
-                app.MapGet($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.GetSecret),
-                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.AddSecret),
-                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.UpdateSecret),
-                app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.DeleteSecret),
+                app.MapGet($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{name}}", ClientMiddleware.GetSecret),
+                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{name}}", ClientMiddleware.AddSecret),
+                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{name}}", ClientMiddleware.UpdateSecret),
+                app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{name}}", ClientMiddleware.DeleteSecret),
 
                 app.MapGet($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Get),
                 app.MapPut($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Create),
