@@ -58,10 +58,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 onFailure: e => Results.NotFound()
             );
 
-        public static Task<IR> AddSecret(string clientId, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> AddSecret(string clientId, int id, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Ensure(client => store.GetSecret(client.ClientId, clientSecret.Id).Match(_ => false, _ => true), Errors.ClientSecretAlreadyExist)
-            .Bind(client => store.CreateSecret(clientId, clientSecret.ToModel(), clientSecret.Id))
+            .Ensure(client => store.GetSecret(client.ClientId, id).Match(_ => false, _ => true), Errors.ClientSecretAlreadyExist)
+            .Bind(client => store.CreateSecret(clientId, clientSecret.ToModel(), id))
             .Match(
                 onSuccess: () => Results.StatusCode((int)HttpStatusCode.Created),
                 onFailure: e => e switch
@@ -72,10 +72,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 }
             );
 
-        public static Task<IR> UpdateSecret(string clientId, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> UpdateSecret(string clientId, int id, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, clientSecret.Id))
-            .Tap(() => store.UpdateSecret(clientId, clientSecret.Id, clientSecret.NewValue, clientSecret.Description, clientSecret.Expiration))
+            .Bind(client => store.GetSecret(client.ClientId, id))
+            .Tap(() => store.UpdateSecret(clientId, id, clientSecret.NewValue, clientSecret.Description, clientSecret.Expiration))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch

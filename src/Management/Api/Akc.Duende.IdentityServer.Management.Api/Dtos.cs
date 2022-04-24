@@ -112,9 +112,9 @@ namespace Akc.Duende.IdentityServer.Management.Api
     }
 
     public record SecretDto(int Id, string Type, string Value, string Description, DateTime? Expiration);
-    public record CreateClientSecretInputDto(int Id, string Type, string Value, string Description, DateTime? Expiration);
+    public record CreateClientSecretInputDto(string Type, string Value, string Description, DateTime? Expiration);
 
-    public record UpdateClientSecretInputDto(int Id, string NewValue, string Description, DateTime? Expiration);
+    public record UpdateClientSecretInputDto(string NewValue, string Description, DateTime? Expiration);
 
     internal record CreateUpdateApiScopeDto(
         string DisplayName,
