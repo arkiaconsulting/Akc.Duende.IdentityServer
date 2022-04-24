@@ -23,11 +23,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         public static Task<HttpResponseMessage> DeleteClient(this HttpClient client, string clientId) =>
             client.DeleteAsync($"clients/{clientId}");
 
-        public static Task<HttpResponseMessage> CreateClientSecret(this HttpClient client, string clientId, CreateClientSecretDto dto) =>
-            client.PutAsJsonAsync($"clients/{clientId}/secrets", dto);
+        public static Task<HttpResponseMessage> CreateClientSecret(this HttpClient client, string clientId, int clientSecretId, CreateClientSecretDto dto) =>
+            client.PutAsJsonAsync($"clients/{clientId}/secrets/{clientSecretId}", dto);
 
-        public static Task<HttpResponseMessage> UpdateClientSecret(this HttpClient client, string clientId, UpdateClientSecretDto dto) =>
-            client.PostAsJsonAsync($"clients/{clientId}/secrets", dto);
+        public static Task<HttpResponseMessage> UpdateClientSecret(this HttpClient client, string clientId, int clientSecretId, UpdateClientSecretDto dto) =>
+            client.PostAsJsonAsync($"clients/{clientId}/secrets/{clientSecretId}", dto);
 
         public static Task<HttpResponseMessage> DeleteClientSecret(this HttpClient client, string clientId, int id) =>
             client.DeleteAsync($"clients/{clientId}/secrets/{id}");

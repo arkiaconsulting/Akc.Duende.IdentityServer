@@ -22,8 +22,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}", ClientMiddleware.Delete),
 
                 app.MapGet($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.GetSecret),
-                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}", ClientMiddleware.AddSecret),
-                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}", ClientMiddleware.UpdateSecret),
+                app.MapPut($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.AddSecret),
+                app.MapPost($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.UpdateSecret),
                 app.MapDelete($"{options.BasePath}/{SubPaths.Clients}/{{clientId}}/{SubPaths.ClientSecrets}/{{id}}", ClientMiddleware.DeleteSecret),
 
                 app.MapGet($"{options.BasePath}/{SubPaths.ApiScopes}/{{name}}", ApiScopeMiddleware.Get),
