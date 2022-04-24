@@ -23,17 +23,17 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests.Assets
         public static Task<HttpResponseMessage> DeleteClient(this HttpClient client, string clientId) =>
             client.DeleteAsync($"clients/{clientId}");
 
-        public static Task<HttpResponseMessage> CreateClientSecret(this HttpClient client, string clientId, int clientSecretId, CreateClientSecretDto dto) =>
-            client.PutAsJsonAsync($"clients/{clientId}/secrets/{clientSecretId}", dto);
+        public static Task<HttpResponseMessage> CreateClientSecret(this HttpClient client, string clientId, string clientSecretName, CreateClientSecretDto dto) =>
+            client.PutAsJsonAsync($"clients/{clientId}/secrets/{clientSecretName}", dto);
 
-        public static Task<HttpResponseMessage> UpdateClientSecret(this HttpClient client, string clientId, int clientSecretId, UpdateClientSecretDto dto) =>
-            client.PostAsJsonAsync($"clients/{clientId}/secrets/{clientSecretId}", dto);
+        public static Task<HttpResponseMessage> UpdateClientSecret(this HttpClient client, string clientId, string clientSecretName, UpdateClientSecretDto dto) =>
+            client.PostAsJsonAsync($"clients/{clientId}/secrets/{clientSecretName}", dto);
 
-        public static Task<HttpResponseMessage> DeleteClientSecret(this HttpClient client, string clientId, int id) =>
-            client.DeleteAsync($"clients/{clientId}/secrets/{id}");
+        public static Task<HttpResponseMessage> DeleteClientSecret(this HttpClient client, string clientId, string clientSecretName) =>
+            client.DeleteAsync($"clients/{clientId}/secrets/{clientSecretName}");
 
-        public static Task<SecretDto?> GetClientSecret(this HttpClient client, string clientId, int id) =>
-            client.GetFromJsonAsync<SecretDto>($"clients/{clientId}/secrets/{id}");
+        public static Task<SecretDto?> GetClientSecret(this HttpClient client, string clientId, string clientSecretName) =>
+            client.GetFromJsonAsync<SecretDto>($"clients/{clientId}/secrets/{clientSecretName}");
 
         public static Task<ApiScopeDto?> GetApiScopes(this HttpClient client) =>
             client.GetFromJsonAsync<ApiScopeDto>("scopes");

@@ -32,28 +32,28 @@ namespace Akc.Duende.IdentityServer.Management.Api
             .Tap(existingClient => { _inMemoryClients.Remove(existingClient); _inMemoryClients.Add(client); })
             .ForgetValue();
 
-        public Task<Result<Secret>> GetSecret(string clientId, int id) =>
+        public Task<Result<Secret>> GetSecret(string clientId, string name) =>
             TryFindClient(_inMemoryClients, clientId)
-            .Bind(client => TryFindSecret(client, id))
+            .Bind(client => TryFindSecret(client, name))
             .Map(secret => new Secret(secret.Value, secret.Description, secret.Expiration) { Type = secret.Type });
 
-        public Task<Result> CreateSecret(string clientId, Secret secret, int id) =>
+        public Task<Result> CreateSecret(string clientId, Secret secret, string name) =>
             TryFindClient(_inMemoryClients, clientId)
-            .Tap(client => client.ClientSecrets.Add(SecretInternal.FromModel(secret, id)))
+            .Tap(client => client.ClientSecrets.Add(SecretInternal.FromModel(secret, $"{clientId}-{name}")))
             .ForgetValue();
 
-        public Task<Result> UpdateSecret(string clientId, int id, string newValue, string description, DateTime? expiration) =>
+        public Task<Result> UpdateSecret(string clientId, string name, string newValue, string description, DateTime? expiration) =>
             TryFindClient(_inMemoryClients, clientId)
             .Bind(client =>
-                TryFindSecret(client, id)
-                .Tap(secret => { client.ClientSecrets.Remove(secret); client.ClientSecrets.Add(new SecretInternal(id, secret.Type, newValue, description, expiration)); })
+                TryFindSecret(client, name)
+                .Tap(secret => { client.ClientSecrets.Remove(secret); client.ClientSecrets.Add(new SecretInternal($"{clientId}-{name}", secret.Type, newValue, description, expiration)); })
             )
             .ForgetValue();
 
-        public Task<Result> DeleteSecret(string clientId, int id) =>
+        public Task<Result> DeleteSecret(string clientId, string name) =>
             TryFindClient(_inMemoryClients, clientId)
             .Bind(client =>
-                TryFindSecret(client, id)
+                TryFindSecret(client, name)
                 .Tap(secret => client.ClientSecrets.Remove(secret))
             ).ForgetValue();
 
@@ -66,8 +66,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 .ToResult(Errors.ClientNotFound)
             ).AsTask();
 
-        private static Result<SecretInternal> TryFindSecret(Client client, int id) =>
-            client.ClientSecrets.OfType<SecretInternal>().TryFirst(s => s.Id == id)
+        private static Result<SecretInternal> TryFindSecret(Client client, string name) =>
+            client.ClientSecrets.OfType<SecretInternal>().TryFirst(s => s.Id == $"{client.ClientId}-{name}")
             .ToResult(Errors.ClientSecretNotFound);
 
         #endregion

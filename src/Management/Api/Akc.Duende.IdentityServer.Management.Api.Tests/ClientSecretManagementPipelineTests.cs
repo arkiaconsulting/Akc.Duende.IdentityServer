@@ -29,18 +29,18 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Add a new client secret to an existing client")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test01(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId, int clientSecretId)
+        public async Task Test01(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await Client.CreateClientSecret(clientId, clientSecretId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, clientSecretName, newClientSecret);
 
             response.Should().Be201Created();
-            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretId);
+            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretName);
             actualClientSecret.Should().NotBeNull().And
                 .BeEquivalentTo(new
                 {
-                    Id = clientSecretId,
+                    Name = clientSecretName,
                     newClientSecret.Type,
                     Value = newClientSecret.Value.Sha256(),
                     newClientSecret.Description,
@@ -51,9 +51,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail adding a client secret when the client does not exist")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test02(string clientId, int clientSecretId, CreateClientSecretDto newClientSecret)
+        public async Task Test02(string clientId, string clientSecretName, CreateClientSecretDto newClientSecret)
         {
-            using var response = await Client.CreateClientSecret(clientId, clientSecretId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, clientSecretName, newClientSecret);
 
             response.Should().Be400BadRequest();
         }
@@ -61,12 +61,12 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Pass when adding a client secret that already exists")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test03(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId, int clientSecretId)
+        public async Task Test03(ClientCreateDto existingClient, CreateClientSecretDto newClientSecret, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
-            _ = await Client.CreateClientSecret(clientId, clientSecretId, newClientSecret);
+            _ = await Client.CreateClientSecret(clientId, clientSecretName, newClientSecret);
 
-            using var response = await Client.CreateClientSecret(clientId, clientSecretId, newClientSecret);
+            using var response = await Client.CreateClientSecret(clientId, clientSecretName, newClientSecret);
 
             response.Should().Be200Ok();
         }
@@ -74,20 +74,20 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Pass when updating a client secret")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test04(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, int clientSecretId, string newSecret, string description, DateTime newExpiry)
+        public async Task Test04(ClientCreateDto existingClient, CreateClientSecretDto initialClientSecret, string clientId, string clientSecretName, string newSecret, string description, DateTime newExpiry)
         {
             var updateSecretDto = new UpdateClientSecretDto(newSecret, description, newExpiry);
             _ = await Client.CreateClient(clientId, existingClient);
-            _ = await Client.CreateClientSecret(clientId, clientSecretId, initialClientSecret);
+            _ = await Client.CreateClientSecret(clientId, clientSecretName, initialClientSecret);
 
-            using var response = await Client.UpdateClientSecret(clientId, clientSecretId, updateSecretDto);
+            using var response = await Client.UpdateClientSecret(clientId, clientSecretName, updateSecretDto);
 
             response.Should().Be200Ok();
-            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretId);
+            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretName);
             actualClientSecret.Should().NotBeNull().And
                 .BeEquivalentTo(new
                 {
-                    Id = clientSecretId,
+                    Name = clientSecretName,
                     initialClientSecret.Type,
                     Value = updateSecretDto.NewValue,
                     updateSecretDto.Description,
@@ -98,9 +98,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail when updating a client secret and the client does not exists")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test05(UpdateClientSecretDto clientSecretUpdate, string clientId, int clientSecretId)
+        public async Task Test05(UpdateClientSecretDto clientSecretUpdate, string clientId, string clientSecretName)
         {
-            using var response = await Client.UpdateClientSecret(clientId, clientSecretId, clientSecretUpdate);
+            using var response = await Client.UpdateClientSecret(clientId, clientSecretName, clientSecretUpdate);
 
             response.Should().Be400BadRequest();
         }
@@ -108,11 +108,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail when updating a client secret that does not exist")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test06(ClientCreateDto existingClient, UpdateClientSecretDto clientSecretUpdate, string clientId, int clientSecretId)
+        public async Task Test06(ClientCreateDto existingClient, UpdateClientSecretDto clientSecretUpdate, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await Client.UpdateClientSecret(clientId, clientSecretId, clientSecretUpdate);
+            using var response = await Client.UpdateClientSecret(clientId, clientSecretName, clientSecretUpdate);
 
             response.Should().Be404NotFound();
         }
@@ -120,12 +120,12 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Pass when deleting a client secret")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test07(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId, int clientSecretId)
+        public async Task Test07(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
-            _ = await Client.CreateClientSecret(clientId, clientSecretId, clientSecret);
+            _ = await Client.CreateClientSecret(clientId, clientSecretName, clientSecret);
 
-            using var response = await Client.DeleteClientSecret(clientId, clientSecretId);
+            using var response = await Client.DeleteClientSecret(clientId, clientSecretName);
 
             response.Should().Be200Ok();
         }
@@ -133,11 +133,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail when deleting a client secret that does not exists")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test08(ClientCreateDto existingClient, string clientId, int secretId)
+        public async Task Test08(ClientCreateDto existingClient, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
 
-            using var response = await Client.DeleteClientSecret(clientId, secretId);
+            using var response = await Client.DeleteClientSecret(clientId, clientSecretName);
 
             response.Should().Be404NotFound();
         }
@@ -145,9 +145,9 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail when deleting a client secret and the client does not exists")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test09(string clientId, int secretId)
+        public async Task Test09(string clientId, string clientSecretName)
         {
-            using var response = await Client.DeleteClientSecret(clientId, secretId);
+            using var response = await Client.DeleteClientSecret(clientId, clientSecretName);
 
             response.Should().Be400BadRequest();
         }
@@ -155,17 +155,17 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Pass when getting a client secret")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test010(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId, int clientSecretId)
+        public async Task Test010(ClientCreateDto existingClient, CreateClientSecretDto clientSecret, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
-            _ = await Client.CreateClientSecret(clientId, clientSecretId, clientSecret);
+            _ = await Client.CreateClientSecret(clientId, clientSecretName, clientSecret);
 
-            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretId);
+            var actualClientSecret = await Client.GetClientSecret(clientId, clientSecretName);
 
             actualClientSecret.Should().NotBeNull().And
                 .BeEquivalentTo(new
                 {
-                    Id = clientSecretId,
+                    Name = clientSecretName,
                     clientSecret.Type,
                     Value = clientSecret.Value.Sha256(),
                     clientSecret.Expiration
@@ -175,11 +175,11 @@ namespace Akc.Duende.IdentityServer.Management.Api.Tests
         [Theory(DisplayName = "Fail when getting a client secret that does not exist")]
         [Trait("Category", "CLIENT_SECRET")]
         [InlineAutoData]
-        public async Task Test011(ClientCreateDto existingClient, string clientId, int clientSecretId)
+        public async Task Test011(ClientCreateDto existingClient, string clientId, string clientSecretName)
         {
             _ = await Client.CreateClient(clientId, existingClient);
 
-            Func<Task> f = () => Client.GetClientSecret(clientId, clientSecretId);
+            Func<Task> f = () => Client.GetClientSecret(clientId, clientSecretName);
 
             await f.Should().ThrowAsync<HttpRequestException>()
                 .Where(e => e.StatusCode == HttpStatusCode.NotFound);

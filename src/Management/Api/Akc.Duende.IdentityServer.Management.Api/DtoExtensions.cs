@@ -229,8 +229,8 @@ namespace Akc.Duende.IdentityServer.Management.Api
         public static Secret ToModel(this CreateClientSecretInputDto dto) =>
             new(dto.Value.ToSha256(), dto.Description, dto.Expiration) { Type = dto.Type };
 
-        public static SecretDto ToDto(this Secret model, int id) =>
-            new(id, model.Type, model.Value, model.Description, model.Expiration);
+        public static SecretDto ToDto(this Secret model, string name) =>
+            new(name, model.Type, model.Value, model.Description, model.Expiration);
 
         public static ApiScopeDto ToDto(this ApiScope model) =>
             new(model.Name,

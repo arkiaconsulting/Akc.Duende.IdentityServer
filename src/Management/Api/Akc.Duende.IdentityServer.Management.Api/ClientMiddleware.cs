@@ -49,19 +49,19 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 onFailure: e => Results.NotFound()
             );
 
-        public static Task<IR> GetSecret(string clientId, int id, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> GetSecret(string clientId, string name, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, id))
-            .Map(model => model.ToDto(id))
+            .Bind(client => store.GetSecret(client.ClientId, name))
+            .Map(model => model.ToDto(name))
             .Match(
                 onSuccess: Results.Ok,
                 onFailure: e => Results.NotFound()
             );
 
-        public static Task<IR> AddSecret(string clientId, int id, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> AddSecret(string clientId, string name, CreateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Ensure(client => store.GetSecret(client.ClientId, id).Match(_ => false, _ => true), Errors.ClientSecretAlreadyExist)
-            .Bind(client => store.CreateSecret(clientId, clientSecret.ToModel(), id))
+            .Ensure(client => store.GetSecret(client.ClientId, name).Match(_ => false, _ => true), Errors.ClientSecretAlreadyExist)
+            .Bind(client => store.CreateSecret(clientId, clientSecret.ToModel(), name))
             .Match(
                 onSuccess: () => Results.StatusCode((int)HttpStatusCode.Created),
                 onFailure: e => e switch
@@ -72,10 +72,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 }
             );
 
-        public static Task<IR> UpdateSecret(string clientId, int id, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> UpdateSecret(string clientId, string name, UpdateClientSecretInputDto clientSecret, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, id))
-            .Tap(() => store.UpdateSecret(clientId, id, clientSecret.NewValue, clientSecret.Description, clientSecret.Expiration))
+            .Bind(client => store.GetSecret(client.ClientId, name))
+            .Tap(() => store.UpdateSecret(clientId, name, clientSecret.NewValue, clientSecret.Description, clientSecret.Expiration))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch
@@ -86,10 +86,10 @@ namespace Akc.Duende.IdentityServer.Management.Api
                 }
             );
 
-        public static Task<IR> DeleteSecret(string clientId, int id, [FromServices] IClientManagementStore store) =>
+        public static Task<IR> DeleteSecret(string clientId, string name, [FromServices] IClientManagementStore store) =>
             store.Get(clientId)
-            .Bind(client => store.GetSecret(client.ClientId, id))
-            .Tap(() => store.DeleteSecret(clientId, id))
+            .Bind(client => store.GetSecret(client.ClientId, name))
+            .Tap(() => store.DeleteSecret(clientId, name))
             .Match(
                 onSuccess: _ => Results.Ok(),
                 onFailure: e => e switch
